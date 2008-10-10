@@ -1,0 +1,54 @@
+\input eplain
+\font\capitolofont=cmssdc10 at 30pt
+\font\sezionefont=cmssdc10 at 15pt
+%	from tex-by-topic pg211
+\def\goodbreak{\par\penalty-500 } % encourage page break
+\def\capitolo#1\par{%
+	\vfill\supereject
+	\noindent\line{\capitolofont #1\hfil}%
+	\vskip 2cm
+}%
+\def\sezione#1\par{%
+	\bigskip
+	\goodbreak
+	\noindent\line{\sezionefont #1\hfil}%
+	\smallskip\noindent
+}%
+\def\elemento#1: #2\par{% from 'A plain Tex primer'
+	\smallskip
+	\bgroup
+	\parindent=4cm
+	\narrower
+	\noindent\llap{\hbox to 4cm{\hfil\bf #1\hfil}}#2\par%
+	\egroup
+	\smallskip
+}%
+\def\code #1{{\tt #1}}
+\def\iniziacode{\smallskip\noindent\line{\hrulefill}\smallskip}
+\def\finecode{\smallskip\noindent\line{\hrulefill}\smallskip\noindent}
+\def\evidenzia<#1>{{\bf #1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\capitolo Getting started
+
+In questi anni si stanno affermando un certo numero di strumenti di tipo
+informatico per gestire le revisioni del codice sorgente in tutte le possibili
+sfaccettature: changelog, autori, righe modificate etc...
+
+\sezione Glossario
+
+Spesse volte la potenza di uno strumento si scontra con un certo numero di
+concetti che \`e necessario assimilare prima di imparare ad usare
+effettivamente un dato strumento e, perch\'e no, modificarlo a proprio uso e
+consumo. In questa sezione definiamo alcuni termini utili per le successive
+dissertazioni (alcuni termini saranno mantenuti in inglese perch\'e molto pi\`u
+evocativi per me).
+
+\elemento Repository: Collezione formata da un database di oggetti e referenze
+relative a queste; praticamente implementata tramite una serie di sottodirectory
+la cui radice \`e %\verbatim .git/ |endverbatim.
+
+\elemento Working tree: rappresenta l'albero dei sorgenti fisicamente presenti
+nel repository.
+
+
+\end
