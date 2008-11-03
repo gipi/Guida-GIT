@@ -1,0 +1,114 @@
+\capitolo Workflow
+
+Solo con l'elenco dei comandi disponibili all'interno di un repository git \`e
+molto difficile che una persona possa comprendere effettivamente come usare
+questo stupendo tool e quindi di seguito ci saranno degli esempi operativi di
+come generalmente uno sviluppatore effettivamente usa git. Siccome le parole
+spesso non sono il mio forte user\`o fortemente dei grafici per aiutarmi
+(mi sono molto ispirato alle slide preparate da Junio Hamano).
+
+\sezione Nuovo progetto
+
+Si presuppone che stiate iniziando un progetto vostro e che la directory di
+lavoro non contenga un precedente repository di git; non \`e importante che i
+file che inserirete nel vostro progetti siano o no gi\`a presenti.
+
+Per inizializzare il repository si usa il comando \code{git init}
+\iniziacode
+$ git init
+Initialized empty Git repository in /path/to/git-repo/.git/
+|endverbatim
+\finecode
+Di seguito si inizia a modificare/copiare/creare i file che dovranno fare parte
+della prima revisione del vostro progetto
+
+\sezione Progetto gi\`a esistente
+
+In questo caso si tratta di lavorare su un repository non sviluppato da voi
+direttamente ma a cui probabilmente siete interessati a partecipare, magari con
+qualche patch ben congegnata. Il primo passo da effettuare \`e la ``clonazione''
+del repository altrui tramite il seguente comando
+\iniziacode
+$ git clone http://dominio/repo.git
+|endverbatim
+\finecode
+Questo crea una directory di nome \code{repo} nella directory dove \`e stato
+lanciato il comando a meno dell'uso dell'opzione \code{--bare} che genera invece
+una directory \code{repo.git} senza un working tree. Questo ultimo comando \`e
+utile per generare repository da condividere.
+
+A questo punto magari si \`e interessati a conoscere il numero di branch
+presenti sul repo remoto: per esempio questo succede per il codice originale di
+git
+\iniziacode
+$ git branch -r
+  origin/HEAD
+  origin/html
+  origin/maint
+  origin/man
+  origin/master
+  origin/next
+  origin/pu
+  origin/todo
+|endverbatim
+\finecode
+
+\sezione Scova il baco
+
+In alcuni casi ci ritroviamo con del codice avente dei problemi di vario tipo e
+per un qualche motivo (magari proprio perch\'e il codice \`e nostro, oppure
+perch\'e quel baco ci sta fottendo il filesystem) siamo noi a dovercene occupare
+e anche in questo git ci d\`a una mano non indifferente.
+\figuratikz[background rectangle/.style=
+	{draw=blue!50,fill=blue!20,rounded corners=1ex},
+  tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw},
+	show background rectangle]
+	\tikzstyle{every node}=[draw,fill=green,shape=circle,distance=5mm];
+	\path (0:0cm)    node (v0) {};
+	\node (v1) [right=of v0];
+	\node (v2) [right=of v1];
+	\node (v3) [right=of v2];
+	\node (v4) [right=of v3];
+	\node (v5) [right=of v4];
+	\node (v6) [right=of v5];
+	\node (v7) [right=of v6];
+	\node (v8) [right=of v7];
+	\node (w1) [below right=of v1];
+	\node (w2) [right=of w1];
+	\node (w3) [right=of w2];
+	\node (z1) [above right=of v2];
+	\node (z2) [right=of z1];
+	\node (z3) [right=of z2];
+	\node (z4) [right=of z3];
+	\draw [->] (v0) -- (v1);
+	\draw [->] (v1) -- (v2);
+	\draw [->] (v2) -- (v3);
+	\draw [->] (v3) -- (v4);
+	\draw [->] (v4) -- (v5);
+	\draw [->] (v5) -- (v6);
+	\draw [->] (v6) -- (v7);
+	\draw [->] (v7) -- (v8);
+	\draw [->] (v1) -- (w1);
+	\draw [->] (w1) -- (w2);
+	\draw [->] (w2) -- (w3);
+	\draw [->] (w3) -- (v5);
+	\draw [->] (v2) -- (z1);
+	\draw [->] (z1) -- (z2);
+	\draw [->] (z2) -- (z3);
+	\draw [->] (z3) -- (z4);
+	\draw [->] (z4) -- (v7);
+% grazie ad "anchor=" posso impostare che la punta della freccia sia
+% il punto rispetto a cui la disegna
+	\node (GOOD) at (v0.north west)
+    [anchor=tip,scale=.4,fill=white!80,single arrow,rotate=315,draw] {GOOD};
+	\node (BAD) at (v8.north west)
+    [anchor=tip,scale=.5,fill=black!80,single arrow,rotate=315,draw] {BAD};
+\endfiguratikz[Schema di un repository dove sappiamo che il commit da cui parte
+\`e uno ``buono'', mentre quello finale \`e ``cattivo'']
+
+\sezione Riscrivi la storia
+
+In questo caso ci si ritrova con un progetto, sviluppato magari internamente ad
+una azienda, in cui sono presenti alcuni file che non sono più necessari e che
+devono rimanere sconosciuti a persone esterne; si ha quindi la necessit\`a di
+doter riscrivere la storia, magari totalmente.

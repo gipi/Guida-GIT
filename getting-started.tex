@@ -1,0 +1,187 @@
+\capitolo Getting started
+
+In questi anni si stanno affermando un certo numero di strumenti di tipo
+informatico per gestire le revisioni del codice sorgente in tutte le possibili
+sfaccettature: changelog, autori, righe modificate etc...
+
+\sezione Glossario
+
+Spesse volte la potenza di uno strumento si scontra con un certo numero di
+concetti che \`e necessario assimilare prima di imparare ad usare
+effettivamente un dato strumento e, perch\'e no, modificarlo a proprio uso e
+consumo. In questa sezione definiamo alcuni termini utili per le successive
+dissertazioni (alcuni termini saranno mantenuti in inglese perch\'e molto pi\`u
+evocativi per me).
+\medskip
+
+\elemento SCM: Acronimo per source code management, sistema usato in ambito
+ingegneristico e di svilippo software per tenere traccia dello sviluppo di
+documenti di stampo elettronico, in particolare codice sorgente.
+
+\elemento sha1: Algoritmo di hashing che genera una cifra esadecimale di 40
+cifre a partire da uno stream di dati.
+
+\elemento blob: Unit\`a fondamentale nel database degli oggetti di git in quanto
+memorizza il contenuto dei file. Il nome dell'oggetto effettivamente creato \`e
+proprio lo sha1 del suo contenuto.
+
+\elemento tree: Unit\`a di immagazzinamento che pu\`o contenere blob e tree
+assieme ai loro metadati (quali nome e modi). Il suo nome nel filesystem \`e lo
+sha1 del suo contenuto.
+
+\elemento commit: Immagazzina un certo tree, collegando ad esso anche delle
+informazioni specificanti una sua descrizione, il suo autore, la data di
+creazione ed i commit da cui esso deriva. Anche in questo caso ci si riferisce
+ad esso tramite lo sha1 del suo contenuto.
+
+\elemento Repository: Collezione formata da un database di oggetti e referenze
+relative a queste; praticamente implementata tramite una serie di sottodirectory
+la cui radice \`e \verbatim .git/ \endverbatim.
+
+\elemento Working tree: Rappresenta l'albero dei sorgenti fisicamente presenti
+nel repository.
+
+\elemento Index: Area in cui vengono immagazzinate le modifiche che faranno
+parte del prossimo commit. Diversamente dagli altri SCM, git non memorizza i
+commit direttamente dal working tree, ma proprio dall'index.
+
+\elemento branch: \`E una referenza che indica una data linea di sviluppo in un
+repository.
+
+\elemento master: Referenza alla linea principale di sviluppo seguita nel
+repository.
+\medskip
+
+Alcuni di questi elementi sono presenti in molti (se non tutti) gli altri SCM;
+analizziamo le caratteristiche principali di questo strumento per la revisione
+del software.
+
+\sezione Direct aciclyc graph
+
+La struttura interna del repository di git si identifica matematicamente con il
+nome di \evidenzia<grafo aciclico diretto> (nella documentazione lo potete
+trovare come acronimo DAG): un grafo \`e costituito da due insiemi $(V,E)$ in
+cui il primo insieme $V$ \`e l'insieme dei vertici (detti anche nodi) mentre
+$E$ \`e l'insieme degli archi $(u,v)$ con $u,v\in V$.
+
+Lo stato storico di un progetto \`e
+rappresentato atomicamente con un determinato commit che descrive lo stato del
+progetto attraverso il tree, il suo autore ed il commit genitore (o pi\`u di uno
+eventualemente) da cui esso si origina assieme alla data in cui questo commit
+\`e stato inserito nel repository.
+
+Questa \`e la rappresentazione di un commit con i metadati relativi ad esso;
+come potete notare ci sono tutte le info di cui abbiamo accennato sopra.
+\iniziacode
+tree 4d4ca73a5a4348ecb75c46d333b3aec4c9956bdb
+author Packz Enoch <packz@autistici.org> 1223658096 +0200
+committer Packz Enoch <packz@autistici.org> 1223658096 +0200
+
+Primo commit.
+
+Riscrivere le routine e` una merda.
+|endverbatim
+\finecode
+Questo punta ad un tree
+\iniziacode
+100644 blob 311a79555017a6d986a3103887c5a5d94851609d	Makefile
+100644 blob 722d7fec3a2ae6c5edf4f5f56acb49f6c2f39a00	guida-git.tex
+|endverbatim
+\finecode
+che punta a sua volta a due oggetti (che non mostro per non inondare di inutile
+merda la pagina) il cui contenuto sono il codice sorgente di questo testo (ai
+suoi albori) e il suo Makefile.
+
+Graficamente questo pu\`o essere tramite uno schema del seguente tipo
+\figuratikz
+\path (0:0cm) node[fill=red!50,rounded rectangle] (commit) {commit};
+\path node[below right=of commit,fill=green!50,rounded rectangle] (author) {author};
+\path node[below=of author,fill=green!50,rounded rectangle] (committer) {committer};
+\path node[below=of committer,fill=green!50,rounded rectangle] (tree) {tree};
+\path node[below right=of tree,fill=blue!50,rounded rectangle] (blob1) {blob1};
+\path node[below=of blob1,fill=blue!50,rounded rectangle] (blob2) {blob2};
+	\draw[->] (commit) |- (tree);
+	\draw[->] (commit) |- (author);
+	\draw[->] (commit) |- (committer);
+	\draw[->] (tree) |- (blob1);
+  \draw[->] (tree) |- (blob2);
+\endfiguratikz[Rappresentazione del grafo di un commit]
+
+Personalmente trovo molto utile dare una rappresentazione delle
+operazioni di questo strumento: nel seguito indicheremo con
+\tikz\node[draw,fill=green,shape=circle]; i vari commit che compongono il
+repository e con  una referenza
+interna del repository stesso; esistono vari tipi di referenze, noi indicheremo
+con\tikz\node[scale=.4,draw, single arrow,rotate=315,fill=red!50]{ref}; quella
+di un branch oppure con \tikz\node[scale=.4,draw, single
+arrow,rotate=315,fill=yellow!50]{tag}; quella relativa ad una tag.
+\figuratikz[background rectangle/.style=
+	{draw=blue!50,fill=blue!20,rounded corners=1ex},
+  tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw},
+	show background rectangle]
+	\tikzstyle{every node}=[draw,fill=green,shape=circle,distance=5mm];
+	\path (0:0cm)    node (v0) {};
+	\node (v1) [right=of v0];
+	\node (v2) [right=of v1];
+	\node (v3) [right=of v2];
+	\node (v4) [right=of v3];
+	\node (v5) [right=of v4];
+	\node (w1) [below right=of v1];
+	\node (w2) [right=of w1];
+	\node (w3) [right=of w2];
+	\draw [->] (v0) -- (v1);
+	\draw [->] (v1) -- (v2);
+	\draw [->] (v2) -- (v3);
+	\draw [->] (v3) -- (v4);
+	\draw [->] (v4) -- (v5);
+	\draw [->] (v1) -- (w1);
+	\draw [->] (w1) -- (w2);
+	\draw [->] (w2) -- (w3);
+% grazie ad "anchor=" posso impostare che la punta della freccia sia
+% il punto rispetto a cui la disegna
+	\node (HEAD) at (v5.north)
+    [anchor=tip,scale=.4,fill=red!50,single arrow,rotate=315,draw] {HEAD};
+	\node (branch1) at (w3.north)
+    [anchor=tip,scale=.5,fill=red!50,single arrow,rotate=315,draw] {branch1};
+  \node[tag] at (v3.north) {v1.0};
+\endfiguratikz[Schema di un repository standard con due rami di sviluppo ed una
+tag ``v1.0'' che identifica un certo punto dello sviluppo.]
+
+\`E importante anche tenere conto di come \`e strutturato effettivamente la
+directory \code{.git/}
+\verbatimescapechar\@
+\iniziacode
+.git
+|-- FETCH_HEAD
+|-- HEAD
+|-- ORIG_HEAD
+|-- branches
+|-- config
+|-- description
+|-- gitk.cache
+|-- hooks
+|   |-- applypatch-msg
+|   |-- commit-msg
+|   |-- post-commit
+|   |-- post-receive
+|   |-- post-update
+|   |-- pre-applypatch
+|   |-- pre-commit
+|   |-- pre-rebase
+|   `-- update
+|-- index
+|-- info
+|   `-- exclude
+|-- logs
+|   |-- HEAD
+|   `-- refs
+|-- objects
+|   |-- info
+|   `-- pack
+`-- refs
+    |-- heads
+    |-- remotes
+    `-- tags
+@endverbatim
+\verbatimescapechar\|
+\finecode

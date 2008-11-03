@@ -1,0 +1,69 @@
+\input eplain
+%% TIKZ ROUTINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input tikz
+\def\figuratikz{\noindent\midinsert\hfil\tikzpicture}
+% non funzionano in locale?
+\newbox\bx
+\newdimen\dimbx
+\newdimen\maxdimbx\maxdimbx=10cm
+\newcount\figuranumero
+\def\endfiguratikz[#1]{%
+  \endtikzpicture%
+  \global\advance\figuranumero by 1%
+  \hfil%
+  \smallskip%
+  \noindent%
+  % calcolo la dimensione del box che deve contenere
+  % la didascalia e TODO: controllare che non sia
+  % maggiore di un tot (tipo 10cm).
+  \setbox\bx\hbox{#1}%
+  \dimbx=\wd\bx%
+  \ifdim\dimbx>\maxdimbx\dimbx=\maxdimbx\fi
+	\line{%
+    \hfil\vbox{%
+      \noindent\hsize=\dimbx%
+      \llap{\bf	Fig.\the\figuranumero\hfil: }\unhbox\bx\hfil%
+    }\hfil}%
+  \endinsert%
+  \noindent%
+}
+\usetikzlibrary{shapes,positioning,folding,backgrounds}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\font\capitolofont=cmssdc10 at 30pt
+\font\sezionefont=cmssdc10 at 15pt
+%	from tex-by-topic pg211
+\def\goodbreak{\par\penalty-500 } % encourage page break
+\def\capitolo#1\par{%
+	\vfill\supereject
+	\noindent\line{\capitolofont #1\hfil}%
+	\vskip 2cm
+}%
+\def\sezione#1\par{%
+	\bigskip
+	\goodbreak
+	\noindent\line{\sezionefont #1\hfil}%
+	\smallskip\noindent
+}%
+\def\elemento#1: #2\par{% from 'A plain Tex primer'
+	\smallskip
+	\bgroup
+	\parindent=4cm
+	\narrower
+	\noindent\llap{\hbox to 4cm{\hfil\bf #1\hfil}}#2\par%
+	\egroup
+	\smallskip
+}%
+\def\code #1{{\tt #1}}
+\def\iniziacode{\smallskip\noindent\line{\hrulefill}\smallskip\verbatim}
+\edef\finecode{%\endverbatim
+  \smallskip\noindent\line{\hrulefill}\smallskip\noindent}
+\def\figura#1\par{%
+	\midinsert%
+		% da mettere a posto
+		\medskip
+		\line{\hfil\epsfbox{#1}\hfil}
+	\endinsert\noindent
+}%
+\def\evidenzia<#1>{{\bf #1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

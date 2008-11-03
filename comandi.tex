@@ -1,0 +1,35 @@
+\capitolo Comandi
+
+Qui di seguito diamo un elenco dei comandi divisi per le rispettive aree di
+interesse: comandi che modificano il repository (lo inizializzano, lo
+``puliscono'' etc..), comandi che modificano l'indice e quelli che danno
+informazioni. Li elencher\`o omettendo il termine git.
+
+\sezione Comandi per la gestione repository
+
+\elemento \code{init}: Inizializza il repository creando la directory {\tt .git}
+e tutte le relative sottodirectory.
+
+\elemento \code{clone}: Inizializza un repository creando una copia di un altro
+repository passato come argomento; il repository pu\`o essere sia locale che
+remoto e la copia pu\`o avere il database degli oggetti in comune nel caso sia
+locale.
+
+\elemento \code{gc}: Comando che gestisce la pulizia e l'ordine del repository;
+si occupa di eliminare i file non pi\`u referenziati, crea un database degli
+oggetti immagazzinati attraverso la creazione dei file \code{.pack} che
+contengono una rappresentazione degli oggetti attraversa dei delta.
+
+\sezione Comandi che modificano l'indice
+
+Come \`e stato detto, l'indice \`e usato come luogo temporaneo per memorizzare i
+cambiamenti che si intendono poi memorizzare nello stato del repository.
+
+\elemento\code{add}: Aggiunge il file passato come argomento all'indice come
+oggetto da essere memorizzato nel prossimo commit.
+
+\sezione Comandi che danno informazioni
+
+\`E molto importante, anche ai fini della comprensione del codice e delle sue
+modifiche, avere sott'occhio quale \`e la descrizione data dall'autore di una
+modifica, le righe modificate o anche spostate da un file all'altro
