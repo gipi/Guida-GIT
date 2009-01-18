@@ -19,8 +19,17 @@ $ git init
 Initialized empty Git repository in /path/to/git-repo/.git/
 |endverbatim
 \finecode
+poi magari si impostano le variabili (se non si \`e gi\`a fatto globalmente)
+relative ai propri dati
+\iniziacode
+$ git config user.name "Nome Cognome"
+$ git config user.email "email@dominio.org"
+|endverbatim
+\finecode
 Di seguito si inizia a modificare/copiare/creare i file che dovranno fare parte
-della prima revisione del vostro progetto
+della prima revisione del vostro progetto; una volta che si ha una prima
+versione a voi congeniale del progetto, si aggiungono i file all'indice tramite
+\code{git add}
 
 \sezione Progetto gi\`a esistente
 
@@ -52,6 +61,144 @@ $ git branch -r
   origin/todo
 |endverbatim
 \finecode
+Metodo standard di lavoro su codice altrui \`e creare un ramo di sviluppo locale
+che sia correlato con i cambiamenti che si vogliono sottoporre al codice: per
+inizializzare un branch alla corrente \code{HEAD} si deve eseguire il seguente
+comando
+\iniziacode
+$ git checkout -b topic
+|endverbatim
+\finecode
+
+Supponiamo di aver creato un branch locale di nome ``topic'' su cui effettuare i
+nostri cambi e che nel frattempo il ramo upstream (di solito il ``master'') sia
+cambiato e noi vogliamo aggiornare il ramo locale con questi, esiste una
+possibilit\`a attraverso il cosidetto \evidenzia<rebasing>: la semantica del
+programma \`e
+\iniziacode
+$ git rebase [--onto <newbase>] <upstream> [<branch>]
+|endverbatim
+\finecode
+Nel caso sia specificato \code{<branch>} avviene un checkout di questo, tutti i
+cambiamenti che sono nel branch corrente ma non sono \code{<upstream>} vengono
+salvati in un'area temporanea per poi essere riapplicati una volta fatto il
+checkout di \code{<upstream>} (oppure di \code{<newbase>} se specificata
+l'opzione \code{--onto}).
+
+Facciamo qualche esempio pratico: supponiamo di
+trovarci nella situazione illustrata sotto, con un ramo principale di sviluppo
+\code{master} ed uno specifico di sviluppo locale (\code{topic})
+\input rebase-start
+ed effettuiamo una operazione del tipo
+\iniziacode
+$ git rebase master topic
+|endverbatim
+\finecode
+cos\`\i\ da ritrovarci in una situazione in cui il ramo \code{topic} ha tutte le
+modifiche che erano presenti upstream (ovviamente essendo cambiato il contenuto,
+cambier\`a lo sha1 che identifica i vari file che generavano tree, commit e via
+dicendo). Questo pu\`o essere rappresentato graficamente con il seguente schema
+\input rebase-simple
+Il comando \code{rebase} ha molte opzioni che lo rendono versatile per poter
+adattare rami di sviluppo tra loro;
+interessante \`e l'uso dell'opzione \code{--onto}: supponiamo di trovarci in una
+situazione in cui un determinato branch si trovi ad essere stato sviluppato a
+partire da un altro branch precedente come dalla seguente figura
+\input rebase-onto-inizio
+eseguendo il comando
+\iniziacode
+$ git rebase --onto master next topic
+|endverbatim
+\finecode
+ci si ritrova in una situazione in cui solo il branch \code{topic} \`e stato
+aggiornato lasciando \code{next} nella sua situazione precedente
+\input rebase-onto-fine
+
+Un'altra metodologia \`e il merge,
+
+\sezione Terzo collaboratore
+
+Succede che ci sia qualcun'altro che lavora ad uno stesso repo ma che ha
+sviluppato delle modifiche indipendenti e, per un motivo o per l'altro, non sono
+state inserite nel repo principale;
+\iniziacode
+$ git remote add bob git://dominio.di.bob.org/path/to/repo.git
+$ git fetch bob
+$ git branch -r
+|endverbatim
+\finecode
+In seguito al \code{fetch}, nel vostro database saranno presenti gli oggetti del
+repo di bob che non sono presenti nel vostro, insieme alle sue referenze
+(visualizzabili con \code{gitk}); nel caso voi siate interessati ad un suo
+branch potete utilizzare l'opzione \code{--track} del comando \code{checkout}
+che vi permetter\`a di aggiornare con un pull quella referenza remote: in questa
+particolare casistica i seguenti comandi sono equivalenti
+\iniziacode
+$ git checkout --track -b i-love-programming bob/i-love-programming
+$ git checkout --track bob/i-love-programming
+|endverbatim
+\finecode
+
+\sezione Merging
+
+Ci sono delle occasioni in cui rebasare un branch rispetto ad un altro non \`e
+possibile in quanto, per esempio, il repository \`e stato esposto al pubblico ed
+\`e cattiva creanza cambiare la storia senza un buon motivo. D'altro canto ci
+sono procedure per cui il merge \`e l'operazione standard
+(\code{pull}$=$\code{fetch}$+$\code{merge}) e quindi conviene conoscere il modo
+un cui gestirlo in maniera adeguata.
+
+Il nostro SCM usa il cosidetto ``three-way'' merge come metodo di base, cio\`e
+utilizza tre versioni per ogni file: le versioni di cui si sta cercando di
+eseguire il merge ed un antenato comune come mostrato nel grafo seguente
+\input merge-scheme
+Noi desideriamo tutti i cambiamenti che ci sono fra
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{A}; e
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{O}; oltre che fra
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{B}; e
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{O};. Ovviamente non \`e sempre
+cos\`i facile in quanto nel repo possono essere gi\`a presenti dei merge
+incrociati (\evidenzia<criss-cross merge>) che non rendono unici l'antenato ed
+in questo caso si effettua un merge ``ricorsivo'' in cui si trova un antenato
+successivo dei precedenti.
+
+A parte la scelta della strategia, alla fine possono esserci dei conflitti
+durante l'operazione che devono essere risolti manualmente (Linus docet).
+
+\sezione Coito interrotto
+
+Il lavorare su rami di sviluppo \`e molto interessante, ma siccome ci sono pi\`u
+branch ma un solo working tree, spesso ci si ritrova a dover passare velocemente
+da un ramo all'altro (magari per fissare un baco di sicurezza appena scoperto)
+ma aver il WT sporco; a questo punto ci si ritrova con due possibilità: o si fa
+un commit da amendare in seguito oppure si usa \code{git stash}.
+
+Uno stash tecnicamente \`e un commit il cui tree registra lo stato della working
+directory; il suo primo genitore \`e il commit dell'\url{HEAD} al momento della
+sua creazione, il secondo registra invece l'indice al momento della creazione:
+nella figura seguente \`e mostrato visivamente quanto affermato
+\input stash-tree
+dove
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{W};
+rappresenta un commit con il contenuto del WT, mentre
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{I}; in maniera analoga
+contiene quello dell'indice.
+
+
+Di default il comando crea uno stash a partire da \url{HEAD}, tuttavia questo
+comando a sua volta accetta vari sottocomandi
+
+Da notare che nel caso noi effettuassimo delle modifiche ad un branch
+sbagliato, sarebbe molto complicato passarle in quello giusto, ma come abbiamo
+visto con lo stash questo \`e immediato.
+
+Un'altra possibilit\`a \`e il trovarsi a controllare che un build di una
+applicazione avvenga in maniera pulita, avendo gi\`a inserito nell'indice i
+cambiamenti per il prossimo commit: \code{git stash save --keep-index} salva
+come descritto precedentemente, ma lasciando per l'appunto l'indice intatto. A
+questo punto per esempio un \code{make} e qualche test sull'applicazione potr\`a
+farci sincerare se effettivamente abbiamo messo tutto il necessario per il
+prossimo commit.
 
 \sezione Scova il baco
 
@@ -106,9 +253,26 @@ e anche in questo git ci d\`a una mano non indifferente.
 \endfiguratikz[Schema di un repository dove sappiamo che il commit da cui parte
 \`e uno ``buono'', mentre quello finale \`e ``cattivo'']
 
-\sezione Riscrivi la storia
+\sezione Riscrivere la storia
 
-In questo caso ci si ritrova con un progetto, sviluppato magari internamente ad
+Possono esserci vari casi in cui ci si ritrova a dover tornare sui nostri passi,
+vuoi per un messaggio di commit sbagliato, per aver dimenticato un file oppure
+ci si ritrova con un progetto, sviluppato magari internamente ad
 una azienda, in cui sono presenti alcuni file che non sono più necessari e che
 devono rimanere sconosciuti a persone esterne; si ha quindi la necessit\`a di
 doter riscrivere la storia, magari totalmente.
+
+Nel primo caso ci si aiuta con un mitico \code{git commit --amend} che riscrive
+l'ultimo commit con il contenuto attuale dell'indice.
+
+Nel secondo caso, molto pi\`u ``pericoloso'' in quanto deve modificare le
+relazione fra blob/tree/commit esistenti, creandone anche di nuovi, non
+modificando le parti utili; a questo \` utile \code{git filter-branch}
+\iniziacode
+$ git filter-branch --env-filter \
+  "export GIT_AUTHOR_NAME='Nome Cognome' \
+  GIT_AUTHOR_EMAIL='email@dominio.org' \
+  GIT_COMMITER_NAME='Nome Cognome' \
+  GIT_COMMITTER_EMAIL=email@dominio.org"
+|endverbatim
+\finecode

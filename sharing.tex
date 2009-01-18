@@ -1,0 +1,129 @@
+\capitolo Sharing
+
+Caratteristica indispensabile per un programma di revisione distribuita, \`e
+quella di poter condividere semplicemente il proprio lavoro con gli altri, in
+maniera indipendente ed autonoma.
+
+Prima di tutto si controlla che ci sia la seguente riga in \code{/etc/services}
+\iniziacode
+git 9418/tcp
+|endverbatim
+\finecode
+che sta ad indicare che il servizio \code{git://} viene offerto alla porta 9418
+tramite protocollo \code{TCP}; il modo pi\`u veloce di tirare su il servizio \`e
+tramite il ``super'' demone \code{inetd(8)} che si preoccupa di gestire per noi
+il programma \code{git daemon}. Nel file \code{/etc/inetd.conf} inserire quanto
+indicato sotto (in un'unica riga):
+\iniziacode
+git stream  tcp nowait  nobody  /usr/bin/git
+  git daemon --inetd --verbose --export-all --interpolated-path=/var/www/git/%D
+  /var/www/git/project1
+  /var/www/project2
+|endverbatim
+\finecode
+Di seguito si riavvia \code{inetd} lanciando un bel \code{SIGHUP} tramite
+\code{pkill -HUP inetd} e per i test successivi si controlla il file
+\code{/var/log/syslog}. Per motivi di sicurezza sarebbe utile che il repo venga
+clonato tramite utente \code{nobody}. Eventuali problemi controllateli con
+\url{/var/log/syslog}
+
+Per utilizzare la filosofia secondo la quale \`e meglio dotare di meno permessi
+possibili un programma che gira come demone, \`e preferibile creare un utente di
+sistema di nome \url{git} che abbia una shell la quale permetta solo di pushare
+e pullare (\url{git-shell}) e senza password (inserire nel file
+\url{/home/git/.ssh/authorized_keys} le chiavi pubbliche a cui \`e permesso di
+accedere in push).
+\iniziacode
+adduser --system --shell /usr/bin/git-shell --gecos 'git version control'
+--group --disabled-password --home /home/git git
+|endverbatim
+\finecode
+Al posto di usare \url{inetd} si pu\`o creare un servizio a parte utilizzando
+una cosa similare al seguente script il quale utilizza magistralmente le regole
+standard che potete trovare in \url{/lib/lsb/init-functions} ed il mitico
+comando \url{start-stop-daemon(8)}
+
+\iniziacode
+#!/bin/sh
+
+test -f /usr/bin/git-daemon || exit 0
+
+. /lib/lsb/init-functions
+
+GITDAEMON_OPTIONS="--reuseaddr --verbose --base-path=/home/git/repositories/ --detach"
+
+case "$1" in
+start)  log_daemon_msg "Starting git-daemon"
+
+        start-stop-daemon --start -c git:git --quiet --background \
+                     --exec /usr/bin/git-daemon -- ${GITDAEMON_OPTIONS}
+
+        log_end_msg $?
+        ;;
+stop)   log_daemon_msg "Stopping git-daemon"
+
+        start-stop-daemon --stop --quiet --name git-daemon
+
+        log_end_msg $?
+        ;;
+*)      log_action_msg "Usage: /etc/init.d/git-daemon {start||stop}"
+        exit 2
+        ;;
+esac
+exit 0
+|endverbatim
+\finecode
+Salvato come \url{/etc/init.d/git-daemon}, renderlo eseguibile (\url{chmod +x})
+ed eseguire \url{update-rc.d git-daemon defaults} per impostare l'avvio nel
+runlevel standard.
+
+Il seguente script serve per inizializzare un repository vuoto su cui pushare
+successivamente (un po' come succede con \url{gitorious}); \`e inteso da
+utilizzare tramite \url{root} (purtroppo se l'utente \url{git} non ha molti
+poteri vista la shell limitata di cui \`e dotato, tocca al superutente fare
+tutto). Per pushare usare \url{git push git@}
+\iniziacode
+#!/bin/sh
+
+REPOS_PATH=/home/git/repositories/
+
+function log_err(){
+	echo $1
+	exit 1
+}
+
+function create_dir(){
+	echo "+ creating dir '$1'"
+	mkdir $1 || log_err "I couldn't create $1"
+}
+
+function init_git_dir(){
+	echo "+ create empty git repo"
+	GIT_DIR=$1 git-init-db || log_err "git init failed"
+}
+
+function change_ownership(){
+	echo "+ change ownership"
+	chown -R git:git $1 || log_err "chown failed"
+}
+
+function enable_export(){
+	echo "+ enabling export"
+	touch $1/git-daemon-export-ok
+}
+
+if [ -z "$1" ]
+then
+	echo "oh my god! no args?"
+	exit 1
+fi
+
+NEW_REPO=$1
+NEW_REPO_PATH=${REPOS_PATH}/${NEW_REPO}
+
+create_dir ${NEW_REPO_PATH}
+init_git_dir ${NEW_REPO_PATH}
+enable_export ${NEW_REPO_PATH}
+change_ownership ${NEW_REPO_PATH}
+|endverbatim
+\finecode

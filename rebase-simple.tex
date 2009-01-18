@@ -1,0 +1,25 @@
+\figuranofloattikz[background rectangle/.style=
+	{draw=blue!50,fill=blue!20,rounded corners=1ex},
+  tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw},
+	show background rectangle]
+	\tikzstyle{every node}=[draw,fill=green,shape=circle,distance=5mm,scale=.6];
+	\path (0:0cm)    node (v0) {D};
+	\node (v1) [right=of v0] {E};
+	\node (v2) [right=of v1] {F};
+	\node (v3) [right=of v2] {G};
+	\node (w1) [below right=of v3] {$A^\prime$};
+	\node (w2) [right=of w1] {$B^\prime$};
+	\node (w3) [right=of w2] {$C^\prime$};
+	\draw [->] (v0) -- (v1);
+	\draw [->] (v1) -- (v2);
+	\draw [->] (v2) -- (v3);
+	\draw [->] (v3) -- (w1);
+	\draw [->] (w1) -- (w2);
+	\draw [->] (w2) -- (w3);
+% grazie ad "anchor=" posso impostare che la punta della freccia sia
+% il punto rispetto a cui la disegna
+	\node (master) at (v3.north)
+    [anchor=tip,fill=red!50,single arrow,rotate=315,draw] {master};
+	\node (topic) at (w3.north)
+    [anchor=tip,fill=red!50,single arrow,rotate=315,draw] {topic};
+\finefiguranofloattikz

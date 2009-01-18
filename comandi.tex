@@ -1,5 +1,11 @@
 \capitolo Comandi
 
+Il modo in cui avviene l'interazione con un repository git \`e attraverso i
+(sotto-)comandi propri di questo SCM e proprio per una scelta implementativa
+questi sono principalmente divisi in due categorie principali: i cosidetti
+\evidenzia<porcelain> e \evidenzia<plumbing>, i primi sono comandi intesi da
+essere utilizzati normalmente, mentre i secondi da script o richiamati dai primi.
+
 Qui di seguito diamo un elenco dei comandi divisi per le rispettive aree di
 interesse: comandi che modificano il repository (lo inizializzano, lo
 ``puliscono'' etc..), comandi che modificano l'indice e quelli che danno
@@ -7,20 +13,29 @@ informazioni. Li elencher\`o omettendo il termine git.
 
 \sezione Comandi per la gestione repository
 
-\elemento \code{init}: Inizializza il repository creando la directory {\tt .git}
+\elemento\code{init}: Inizializza il repository creando la directory {\tt .git}
 e tutte le relative sottodirectory.
+
+\elemento\code{fetch}: Esegue il download di oggetti e referenze da un altro
+repository.
+
+\elemento\code{pull}: Come il precedente, ma esegue anche un merge con il ramo
+di lavoro del repo locale.
 
 \elemento \code{clone}: Inizializza un repository creando una copia di un altro
 repository passato come argomento; il repository pu\`o essere sia locale che
-remoto e la copia pu\`o avere il database degli oggetti in comune nel caso sia
-locale.
+remoto (nel primo caso il database degli oggetti pu\`o essere in comune).
+Questa copia viene creata in una nuova directory e crea dei branch locali per
+ogni branch remoto (visualizzabili tramite \code{git branch -r}).
 
 \elemento \code{gc}: Comando che gestisce la pulizia e l'ordine del repository;
 si occupa di eliminare i file non pi\`u referenziati, crea un database degli
 oggetti immagazzinati attraverso la creazione dei file \code{.pack} che
-contengono una rappresentazione degli oggetti attraversa dei delta.
+contengono una rappresentazione degli oggetti attraversa dei delta. Notare che
+finch\`e non viene eseguito questo comando esplicitamente, ogni oggetto che un
+tempo si trovava nel db \`e ancora presente.
 
-\sezione Comandi che modificano l'indice
+\sezione Comandi che modificano l'indice ed il working tree
 
 Come \`e stato detto, l'indice \`e usato come luogo temporaneo per memorizzare i
 cambiamenti che si intendono poi memorizzare nello stato del repository.
@@ -28,8 +43,90 @@ cambiamenti che si intendono poi memorizzare nello stato del repository.
 \elemento\code{add}: Aggiunge il file passato come argomento all'indice come
 oggetto da essere memorizzato nel prossimo commit.
 
+\elemento\code{reset}: Riporta \code{HEAD} ad uno stato specifico; pu\`o
+eventualemente resettare l'indice e/o il working tree.
+
+\elemento\code{clean}: Rimuove file non nell'indice dal working tree.
+
+\elemento\code{stash}: Salva lo stato dell'indice in una referenza temporanea
+nel caso si necessiti un ambiente pulito in poco tempo.
+
+\elemento\code{checkout}: Imposta il working tree ad un determinato stato. \`E
+lo strumento base per il passaaggio da un branch all'altro (quando gi\`a
+esistenti).
+
+\elemento\code{am}: Applica delle patch ottenute tramite email estraendole da
+una mailbox ed \`e possibile eseguirlo interattivamente.
+
+\elemento\code{cherry-pick}: Applica i cambiamenti introdotti da un commit
+nell'attuale indice e working tree creando un nuovo commit; prevalentemente
+usato per traslare da un branch locale ad un altro singole modifiche senza
+effettuare rebasing o merging.
+
+\sezione Comandi per condividere
+
+\elemento\code{format-patch}: Genera una (serie di) patch formattate in
+maniera da poter essere mandati tramite mail. Prende molti degli argomenti che
+digerisce \code{diff}.
+
+\elemento\code{send-mail}: Invia patch come email, molto comodo nel caso in cui
+il workflow comprenda la discussione dello sviluppo software via mail.
+
+\elemento\code{bundle}: Genera, verifica o descrive un archivio comprendente
+oggetti e referenze di un repository.
+
 \sezione Comandi che danno informazioni
 
 \`E molto importante, anche ai fini della comprensione del codice e delle sue
 modifiche, avere sott'occhio quale \`e la descrizione data dall'autore di una
 modifica, le righe modificate o anche spostate da un file all'altro
+
+\elemento\code{diff}: Visualizza differenze fra commit visualizzandoli nel
+formato \evidenzia<unidiff>\notapiepagina{Lo ``unified format'' ha nella sua
+intestazione una riga del tipo \code{@@ -R +R @@}, dove \code{R}
+rappresenta un range attraverso la sequenza $l,s$ dove $l$ \`e la linea
+di partenza
+della modifica ed $s$ il numero di linee cambiate. Per ulteriori informazioni ci
+si pu\`o riferire a \url{http://en.wikipedia.org/wiki/Diff#Unified_format}}
+modificato.
+
+\elemento\code{log}: Visualizza informazioni riguardanti i commit in senso
+temporale.
+
+\elemento\code{reflog}: Visualizza informazioni riguardo ai movimenti delle
+``punte'' dei branch; \`e molto utile per recuperare cambiamenti non pi\`u
+direttamente accessibili come per esempi quelli precedenti ad un rebasing.
+
+\elemento\code{grep}: In maniera similare al tool da riga di comando, cerca
+all'interno dei file del repo se esiste una data stringa.
+
+\elemento\code{ls-files}: Restituisce informazioni riguardanti i file presenti
+nell'indice e nel working tree.
+
+\elemento\code{ls-tree}: Come il precedente, ma limitato ai tree; l'output
+assomiglia molto a quello di \code{ls -l} nella normale shell \url{UNIX} like.
+
+\elemento\code{blame}: Mostra dato un file, per ogni riga
+a quale commit \`e riconducibile la stessa; molto utile per contattare lo
+sviluppatore del codice che ci interessa.
+
+\elemento\code{annotate}: Praticamente come il precedente ed esistente solo per
+retrocompatibilit\`a, fornendo un nome similare a comandi presenti in altri SCM.
+
+\sezione Comandi che configurano
+
+\elemento\code{config}: \`E il programma principale attraverso cui impostare il
+comportamento di \code{git} per i vostri scopi.
+
+\sezione Cose che non sono comandi
+
+\elemento\code{.gitignore}: File tramite cui istruire \code{git} che alcune
+tipologie di file (specificabili anche tramite dei pattern) non sono da tenere
+in considerazione; principalmente da usare per evitare file binari e
+temporanei.
+
+\elemento\code{.gitattributes}: File tramite cui istruire \code{git}
+
+\elemento\code{hooks}: Script posizionati in \url{$GIT_DIR/hooks/} e che sono
+preposti per specifiche azioni da compiersi in determinate situazioni.
+

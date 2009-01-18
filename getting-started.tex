@@ -2,7 +2,11 @@
 
 In questi anni si stanno affermando un certo numero di strumenti di tipo
 informatico per gestire le revisioni del codice sorgente in tutte le possibili
-sfaccettature: changelog, autori, righe modificate etc...
+sfaccettature: changelog, autori, righe modificate etc... In particolare si
+stanno affermando i cosidetti \evidenzia<distributed revision control>, sistemi
+in cui lo sviluppo avviene in maniera distribuita senza un repository centrale e
+senza la necessit\`a di collegarsi tramite rete ad esso\notapiepagina{Vedere
+\url{http://people.ubuntu.com/~ianc/papers/dvcs-why-and-how.pdf}}
 
 \sezione Glossario
 
@@ -18,8 +22,9 @@ evocativi per me).
 ingegneristico e di svilippo software per tenere traccia dello sviluppo di
 documenti di stampo elettronico, in particolare codice sorgente.
 
-\elemento sha1: Algoritmo di hashing che genera una cifra esadecimale di 40
-cifre a partire da uno stream di dati.
+\elemento sha1: Algoritmo di hashing che genera una sequenza esadecimale di 40
+cifre a partire da uno stream di dati. Pare esistano attacchi che lo rendono
+insicuro ma git dovrebbe essere ragionevolmente inattaccabile.
 
 \elemento blob: Unit\`a fondamentale nel database degli oggetti di git in quanto
 memorizza il contenuto dei file. Il nome dell'oggetto effettivamente creato \`e
@@ -185,3 +190,142 @@ directory \code{.git/}
 @endverbatim
 \verbatimescapechar\|
 \finecode
+
+\sezione Filesystem
+
+L'implementazione iniziale su cui Linus Torvalds ha costruito questo strumento
+\`e stato
+
+\sezione git
+
+Il cuore di tutto \`e il comando \code{git} che rappresenta il cancello di
+ingresso per le potenzialit\`a dello sviluppo di codice; siccome lo sviluppo \`e
+molto veloce, state attenti a quale versione state utilizzando \gitversion. Allo
+stato attuale il comando ha il seguente help
+\githelp
+\noindent che d\`a una visione di insieme
+delle possibilit\`a offerte. Tramite esso e le
+sue opzioni \`e possibile impostare anche la directory contenente il database
+del repository (usualmente \code{.git/}) oppure il workiing tree impostando
+rispettivamente le opzioni \code{--git-dir=} o \code{--work-tree=} (in
+alternativa esistono le variabili di ambiente \verbatim GIT_DIR |endverbatim e
+\verbatim GIT_WORK_TREE|endverbatim).
+
+\sezione Revisioni
+
+Come \`e stato detto sin dall'inizio, questo applicativo \`e un gestore di
+revisioni e quindi deve essere possibile per lavorarci, disporre di una
+grammatica che permetta di identificare determinate revisioni (o parti di esse)
+tramite parametri temporali, di discendenza etc...
+Principalmente esistono le seguenti maniere per riferirsi a delle specifiche
+revisioni
+\unorderedlist
+\li Il nome dell'oggetto tramite il suo \code{SHA1} che identifica il contenuto
+dell'oggetto oppure una sua sottosequenza
+\li Una referenza simbolica contenuta che verr\`a cercata in questo ordine
+restituendo la prima trovata 
+\orderedlist
+\li\verbatim $GITDIR/<name>|endverbatim
+\li\verbatim $GITDIR/refs/<name>|endverbatim
+\li\verbatim $GITDIR/refs/tags/<name>|endverbatim
+\li\verbatim $GITDIR/refs/heads/<name>|endverbatim
+\li\verbatim $GITDIR/refs/remote/<name>|endverbatim
+\li\verbatim $GITDIR/refs/remote/<name>/HEAD|endverbatim
+\endorderedlist
+\noindent tenendo conto che esistono referenze che hanno significati particolari:
+\code{HEAD} rappresenta il commit su cui l'attuale working tree \`e basato
+(quindi ad ogni cambio di branch \`e lui ad essere cambiato assieme al working
+tree).
+\endunorderedlist
+
+\noindent \`E possibile anche specificare anche una referenza a partire da una notazione
+temporale
+\smallskip
+\noindent\line{\hfil\verbatim <ref>@{DATE SPECIFICATION} |endverbatim\hfil}
+\noindent\line{\hfil\verbatim <ref>@{ORDINAL SPECIFICATION} |endverbatim\hfil}
+\noindent\line{\hfil\verbatim <rev>^ |endverbatim\hfil}
+\noindent\line{\hfil\verbatim <rev>~N |endverbatim\hfil}
+\smallskip
+Esiste un particolare sottocomando di git per ottenere il nome della referenza
+effettivamente indicata attraverso uno dei metodi appena descritti: \code{git
+rev-parse}; \`e utilizzato principalmente attraverso gli script e gli altri
+comandi git ma comunque rimane utile conoscere la grammatica delle referenze,
+visto che sono utilizzate da tutti i sottocomandi di git.
+
+Un'altra importantissima grammatica \`e la maniera di specificare un intervallo
+di revisioni; partiamo dalle due revisioni \code{r1} e \code{r2}, se siamo
+interessati ai commit raggiungibili da \code{r2} escludendo quelli
+raggiungibili da \code{r1} lo si deve indicare tramite \code{r1..r2}. In maniera
+similare si indica con \code{r1...r2} e restituisce l'insieme dei commit che
+sono raggiungibili da uno dei due ma non entrambi (nella documentazione viene
+chiamata \evidenzia<differenza simmetrica>).
+Per usare parole dello stesso Torvalds
+\smallskip
+\noindent\line{%
+source: \url{http://article.gmane.org/gmane.comp.version-control.git/80592}%
+\hfil}
+\smallskip
+\verbatim
+ - "a..b" is a plain difference. Think of it as a subtraction. For "diff", 
+   it is simply the diff between a and b, and for log it is the "set 
+   difference" (shown as either just "-" or as "\" in set theory math) 
+   between the commits that are in b and not in a.
+
+ - "a...b" is a more complex difference. For log, it's no longer the 
+   regular set difference, but a "symmetric difference" (usually shown as 
+   a greek capital "Delta" in set theory math). And for "diff", it's no 
+   longer just the diff between two states, it's the diff from a third 
+   state (the nearest common state) to the second state.
+|endverbatim
+\smallskip
+Per indicare i genitori di un dato commit esistono due ulteriori abbreviazioni:
+\verbatim r1^@ |endverbatim indica tutti i genitori di \code{r1}, mentre
+\verbatim r1^! |endverbatim include
+\code{r1} ma esclude tutti i suoi genitori (in pratica \`e una abbreviazione per
+indicare un singolo commit in comandi che richiedono dei range). 
+
+\sezione Installazione
+
+Come abbiamo detto lo sviluppo di git \`e molto veloce e spesso ci si ritrova a
+scoprire delle funzionalit\`a accessibili solo in fase di sviluppo
+(o per chi magari
+usa debian doversi ritrovare con una versione molto vecchia a causa del lungo
+ciclo di rilascio di questa distribuzione). Quindi chi vuole il massimo si
+consiglia di seguire queste istruzioni ed installare l'ultima versione
+(preferibilmente stabile).
+
+Prima di tutto se non lo sia ha gi\`a si scarica l'albero dei sorgenti
+\iniziacode
+$ git clone git://git.kernel.org/pub/scm/git/git.git
+|endverbatim
+\finecode
+e si installa seguendo il ciclo ad ogni uscita di versione stabile (nel seguito
+si indicher\`a con \code{vx.x.x.x} una versione che si intende installare)
+\iniziacode
+$ git pull
+$ git tag
+$ git checkout vx.x.x.x
+$ ./configure --prefix=/opt/git-vx.x.x.x
+$ make
+$ make install
+$ make doc
+$ make install-doc
+$ cd /opt/
+$ unlink git
+$ ln -s git-vx.x.x.x git
+|endverbatim
+\finecode
+
+Da notare che la prima volta non sar\`a necessario eseguire l'unlinking della
+directory \code{git} e neanche un pulling dell'albero dei sorgenti, per\`o
+sar\`a necessario settare il path nella vostra shell (nel mio caso in
+\code{.bashrc})
+\iniziacode
+PATH=/opt/git/bin:$PATH
+|endverbatim
+\finecode
+verificando che \code{git --version} vi restituisca la versione corretta
+(inserire in quell'ordine la directory dell'installazione previene il sistema
+dall'usare come eseguibile un eventuale pacchetto pi\`u vecchio). Purtroppo a
+meno di workaround non conosciuti da me \code{man} non restituir\`a la pagina di
+help corretta, consiglio di usare \code{git help}.

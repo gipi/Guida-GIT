@@ -1,4 +1,9 @@
 \input eplain
+\beginpackages
+  \usepackage{url}
+\endpackages
+%\enablehyperlinks[pdftex]
+%\hlopts{bwidth=0,colormodel=gray,color=.4}
 %% TIKZ ROUTINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input tikz
 \def\figuratikz{\noindent\midinsert\hfil\tikzpicture}
@@ -27,6 +32,32 @@
   \endinsert%
   \noindent%
 }
+\def\figuranofloattikz{\medskip\noindent\hfil\tikzpicture}
+\def\finefiguranofloattikz{\endtikzpicture\hfil\medskip\noindent}
+%%%% figura in mezzo al paragrafo %%%%%%
+\newbox\tikzbox
+\newdimen\tikzboxwt
+\newdimen\tikzboxht
+\newcount\lineanumero
+\def\figuratikzpar{%
+  \lineanumero=\the\prevgraf
+  \setbox\tikzbox\hbox\bgroup\tikzpicture
+}%
+\def\endfiguratikzpar{%
+  \endtikzpicture%
+  \egroup%
+  \tikzboxwt=\wd\tikzbox\advance\tikzboxwt by 1cm
+  \tikzboxht=\ht\tikzbox
+  \hangafter=-10
+  \hangindent=\tikzboxwt
+  \vadjust{%
+    \smash{%
+      \rlap{\hfil%
+        \lower\tikzboxht\vbox{\hsize=\tikzboxwt\noindent\unhbox\tikzbox}
+      \hfil}
+    }
+  }
+}
 \usetikzlibrary{shapes,positioning,folding,backgrounds}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \font\capitolofont=cmssdc10 at 30pt
@@ -44,6 +75,8 @@
 	\noindent\line{\sezionefont #1\hfil}%
 	\smallskip\noindent
 }%
+\newcount\numeronota
+\let\notapiepagina=\numberedfootnote
 \def\elemento#1: #2\par{% from 'A plain Tex primer'
 	\smallskip
 	\bgroup
@@ -56,7 +89,7 @@
 \def\code #1{{\tt #1}}
 \def\iniziacode{\smallskip\noindent\line{\hrulefill}\smallskip\verbatim}
 \edef\finecode{%\endverbatim
-  \smallskip\noindent\line{\hrulefill}\smallskip\noindent}
+  \smallskip\noindent\line{\hrulefill}\goodbreak\smallskip\noindent}
 \def\figura#1\par{%
 	\midinsert%
 		% da mettere a posto
@@ -65,5 +98,25 @@
 	\endinsert\noindent
 }%
 \def\evidenzia<#1>{{\bf #1}}
+\def\link#1: #2\par{%
+	\goodbreak
+	\noindent\url{#1}
+	\smallskip
+	\hfil\vbox{\advance\hsize by-1cm\noindent #2}
+	\medskip
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\def\licenza{%
+\vbox{Permission is granted to copy, distribute and/or modify the documentation
+under the terms of the gnu Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the section entitled gnu Free
+Documentation License. Permission is granted to copy, distribute and/or modify
+the code of the package under the terms of the gnu Public License, Version 2 or
+any later version published by the Free Software Foundation. A copy of the
+license is included in the section entitled gnu Public License.}
+}
+\def\gitversion{\input versione }
+\def\githelp{\smallskip\input githelp \smallskip}
+\def\GITDIR#1{\code{$GIT_DIR/#1}}

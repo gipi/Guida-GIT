@@ -1,0 +1,25 @@
+\figuranofloattikz[background rectangle/.style=
+	{draw=blue!50,fill=blue!20,rounded corners=1ex},
+  tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw},
+	show background rectangle]
+	\tikzstyle{every node}=[minimum size=.5cm, draw,fill=green,shape=circle,distance=5mm,scale=.6];
+  \path (0:0cm) node (v0);
+	\node (v1) [right=of v0];
+	\node (v2) [right=of v1];
+	\node (v3) [right=of v2] {O};
+	\draw [<-] (v0) -- (v1);
+	\draw [<-] (v1) -- (v2);
+	\draw [<-] (v2) -- (v3);
+  % upper branch
+	\node (v4) [above right=of v3] ;
+	\node (v6) [right=of v4] ;
+	\node (v7) [right=of v6] {A};
+	\draw [<-] (v3) -- (v4);
+	\draw [<-] (v4) -- (v6);
+	\draw [<-] (v6) -- (v7);
+  % lower branch
+	\node (v5) [below right=of v3] ;
+	\node (v8) [right=of v5] {B};
+	\draw [<-] (v3) -- (v5);
+	\draw [<-] (v5) -- (v8);
+\finefiguranofloattikz

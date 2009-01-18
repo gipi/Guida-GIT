@@ -1,9 +1,91 @@
 \input macro
+%\parfillskip 10pt plus 1fil
 % capitoli
+\line{\capitolofont GIT}
+\vfil
+\licenza
+\eject
 \input getting-started
 \input comandi
 \input workflow
+\input sharing
 
+\input submodule
 
+\capitolo Miscellanea
+
+\sezione Debugging del push
+
+Per qualche oscura ragione potrebbe non funzionare correttamente il push tramite
+\code{ssh} e quindi di seguito un metodo molto interessante
+\iniziacode
+$ echo "ssh -v $@" > ssh_debug_wrapper
+$ GIT_SSH="./ssh_debug_wrapper" git push
+|endverbatim
+\finecode
+
+\sezione Creare branch indipendente o commit senza parenti
+
+Per creare un commit chiamato \code{mybranch} senza parenti
+(in pratica un branch slegato)
+\iniziacode
+$ git symbolic-ref HEAD refs/heads/mybranch
+$ git rm --cached -r .
+$ rm *
+$ git commit --allow-empty
+|endverbatim
+\finecode
+
+\sezione Low level
+
+Per la compressione a basso livello viene usata la libreria zlib
+(\url{http://www.zlib.net}) unica vera dipendenza di git; i loose object nel
+database vengono compressi tramite esso ed \`e possibile ottenere un programma
+per la decompressione a riga di comando alla pagina
+\url{http://www.zlib.net/zpipe.c}. Una volta compilato \`e possibile ottenere la
+decompressione di un oggetto tramite \code{zpipe -d < .git/objects/xx/} in
+maniera analoga al comando \code{git cat-file -p SHA1} bench\'e il secondo dia
+un risultato formattato in maniera molto pi\`u human-readable.
+
+Volendo essere pi\`u ``creativi'' esiste il comando \code{hash-object} che crea
+un blob ed il comando \code{mktree} che crea un \code{tree} salvandoli nella
+directory \code{.git/objects/} e restituendo lo \code{sha1} relativo. Infine per
+creare un commit esiste il comando \code{commit-tree} che prende come primo
+argomento un tree (o pi\`u d'uno) e dallo \code{stdin} il messaggio relativo;
+ovviamente ci viene restituito lo \code{sha1} del commit e salvato del database
+l'oggetto relativo.
+
+\capitolo Linkografia
+
+Questo strumento \`e in sviluppo vertiginoso e non esistono libri specifici
+(tranne alcune eccezzioni) sull'argomento che \`e sempre in movimento; essendo
+inoltre uno strumento nato e cresciuto in ambito ipertestuale, sembra pi\`u
+consono creare una linkografia piuttosto che una bibliografia.
+\bigskip
+%\doublecolumns
+\link http://git.or.cz/: Homepage di git, contenente gli archivi con le varie
+versioni scaricabili, la documentazione; sito molto tecnico.
+
+\link http://book.git-scm.com/: Pagina indirizzata alla creazione di un manuale
+pi\`u user friendly rispetto alla documentazione dell'homepage.
+
+\link http://whygitisbetterthanx.com/: Pagina di confronto fra gli altri
+strumenti di versioning e git.
+
+\link
+http://betterexplained.com/articles/intro-to-distributed-version-control-illustrated/:
+Guida visuale agli strumenti di revisione distribuiti.
+
+\link http://mendicantbug.com/2008/11/30/10-reasons-to-use-git-for-research/:
+Una dissertazione dell'utilizzo di git in ambiente di ricerca.
+
+\link http://vafer.org/blog/20080115011320:
+Istruzioni abbastanza dettagliate per pubblicare un repository git attraverso
+git daemon.
+
+\link http://lwn.net/Articles/210045/: Articolo che descrive alcune
+caratteristiche e funzionamento di git.
+
+\vfill\eject
 
 \end
