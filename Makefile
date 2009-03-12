@@ -4,8 +4,10 @@ SRC_MACRO += macro.tex
 SRC_CAP += getting-started.tex
 SRC_CAP += comandi.tex
 SRC_CAP += workflow.tex
+SRC_CAP += informazioni.tex
 SRC_CAP += sharing.tex
 
+SRC_FIG += rebase-start.tex
 SRC_FIG += rebase-onto-inizio.tex
 SRC_FIG += rebase-onto-fine.tex
 SRC_FIG += stash-tree.tex

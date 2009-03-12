@@ -1,0 +1,40 @@
+\capitolo Ottenere informazioni
+
+In maniera equivalente alla gestione di modifiche del codice, \`e importante
+poter recuperare informazioni memorizzate direttamente o indirettamente
+all'interno del codice, come per esempio autori, struttura dell'albero dei
+sorgenti, quali file sono stati modificati e quando etc...
+
+All'interno di \code{git} esistono famiglie di comandi che sono stati pensati a
+questo scopo e molto malleabili da questo punto di vista.
+
+\sezione Log
+
+Il pi\`u alla mano \`e sicuramente \code{git log} che visualizza a partire da
+una data referenza (se non la si indica parte da \code{HEAD}) la struttura di
+grafo fra commit. Per esempio se si \`e pullato dal master di un repository i
+seguenti comandi danno diverse informazioni
+\iniziacode
+$ git log master..origin/master
+$ git log origin/master..master
+$ git log origin/master...master
+|endverbatim
+\finecode
+nel primo caso vengono visualizzati i cambiamenti fatti dagli altri, nel secondo
+quello che si ha in locale senza mostrare i cambiamenti degli altri. L'ultimo
+mostra entrambi.
+
+\figuratikz[show background rectangle]
+	\path (0:0cm)    node (v0) {};
+	\node[commit] (v1) [right=of v0]
+{
+\tikzcommit{Cambiamento epocale nella programmazione}
+};
+	\node (v2) [right=of v1];
+\endfiguratikz[log]
+
+\iniziacode
+$ git log --pretty=oneline --stat \| \\
+   sed -n 's/^ \([0-9]*\) files changed, \([0-9]\) insertions(+), \([0-9]\) deletions(-)/\1 \2 \3/p'
+|endverbatim
+\finecode

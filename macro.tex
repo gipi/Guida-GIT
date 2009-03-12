@@ -59,6 +59,24 @@
   }
 }
 \usetikzlibrary{shapes,positioning,folding,backgrounds}
+\def\tikzcommit#1{
+\bgroup
+\baselineskip=5pt
+Commit d47abe6767
+
+Author: Pinco Pallo
+
+Date:   Thu Feb 26 19:30:55 2009 +0100
+
+\indent #1
+\egroup
+}
+% imposto alcune tipologie di nodi
+\tikzset{every node/.style={draw,fill=green,shape=circle,distance=5mm}}
+\tikzset{commit/.style={shape=rectangle, rounded corners=1ex, font=\commitfn, text width=5cm}}
+\tikzset{background rectangle/.style={draw=blue!50,fill=blue!20,rounded corners=1ex}}
+\tikzset{tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw}}
+\tikzset{head/.style={anchor=tip,single arrow, scale=.5,fill=red!50,rotate=315,draw}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \font\capitolofont=cmssdc10 at 30pt
 \font\sezionefont=cmssdc10 at 15pt

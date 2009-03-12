@@ -70,6 +70,43 @@ $ git checkout -b topic
 |endverbatim
 \finecode
 
+\sezione Merging
+
+Ci sono delle occasioni in cui rebasare un branch rispetto ad un altro non \`e
+possibile in quanto, per esempio, il repository \`e stato esposto al pubblico ed
+\`e cattiva creanza cambiare la storia senza un buon motivo. D'altro canto ci
+sono procedure per cui il merge \`e l'operazione standard
+(\code{pull}$=$\code{fetch}$+$\code{merge}) e quindi conviene conoscere il modo
+un cui gestirlo in maniera adeguata.
+
+Il nostro SCM usa il cosidetto ``three-way'' merge come metodo di base, cio\`e
+utilizza tre versioni per ogni file: le versioni di cui si sta cercando di
+eseguire il merge ed un antenato comune come mostrato nel grafo seguente
+\input merge-scheme
+Noi desideriamo tutti i cambiamenti che ci sono fra
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{A}; e
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{O}; oltre che fra
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{B}; e
+\tikz\node[scale=.4,draw,fill=green,shape=circle]{O};. Ovviamente non \`e sempre
+cos\`i facile in quanto nel repo possono essere gi\`a presenti dei merge
+incrociati (\evidenzia<criss-cross merge>) che non rendono unici l'antenato ed
+in questo caso si effettua un merge ``ricorsivo'' in cui si trova un antenato
+successivo dei precedenti.
+
+Per trovare il risultato finale dall'antenato comune, si tiene in considerazione
+\orderedlist
+\li se solo un lato cambia, si prende quello
+\li se entrambi cambiano e portano allo stesso risultato, si prende quello
+\li altrimenti si ha un conflitto
+\endorderedlist
+quanto detto sopra si applica ai cambiamenti relativi al contenuto dei file ma
+anche ai relativi path.
+
+A parte la scelta della strategia, alla fine possono esserci dei conflitti
+durante l'operazione che devono essere risolti manualmente (Linus docet).
+
+\sezione Rebasing
+
 Supponiamo di aver creato un branch locale di nome ``topic'' su cui effettuare i
 nostri cambi e che nel frattempo il ramo upstream (di solito il ``master'') sia
 cambiato e noi vogliamo aggiornare il ramo locale con questi, esiste una
@@ -83,7 +120,13 @@ Nel caso sia specificato \code{<branch>} avviene un checkout di questo, tutti i
 cambiamenti che sono nel branch corrente ma non sono \code{<upstream>} vengono
 salvati in un'area temporanea per poi essere riapplicati una volta fatto il
 checkout di \code{<upstream>} (oppure di \code{<newbase>} se specificata
-l'opzione \code{--onto}).
+l'opzione \code{--onto}); ovviamente \`e possibile che il processo di merging
+possa intopparsi, in tal caso si applica quanto detto nella sezione del merging
+per la risoluzione dei problemi. Una volta che si \`e convinti del risultato si
+usa \code{rebase --continue} oppure saltare il commit incriminato (\code{git
+rebase --skip}) o addirittura riportare tutto come alla partenza (\code{git
+rebase --abort}). In \code{ORIG\_HEAD} viene salvata la referenza alla
+cima del branch prima del reset.
 
 Facciamo qualche esempio pratico: supponiamo di
 trovarci nella situazione illustrata sotto, con un ramo principale di sviluppo
@@ -114,7 +157,8 @@ ci si ritrova in una situazione in cui solo il branch \code{topic} \`e stato
 aggiornato lasciando \code{next} nella sua situazione precedente
 \input rebase-onto-fine
 
-Un'altra metodologia \`e il merge,
+\`E possibile inoltre raffinare l'azione di modifica di un branch tramite
+l'opzione \code{--interactive}, \code{-i} di \code{git rebase}:
 
 \sezione Terzo collaboratore
 
@@ -125,6 +169,7 @@ state inserite nel repo principale;
 $ git remote add bob git://dominio.di.bob.org/path/to/repo.git
 $ git fetch bob
 $ git branch -r
+$ git log -p ..FETCH_HEAD
 |endverbatim
 \finecode
 In seguito al \code{fetch}, nel vostro database saranno presenti gli oggetti del
@@ -138,32 +183,6 @@ $ git checkout --track -b i-love-programming bob/i-love-programming
 $ git checkout --track bob/i-love-programming
 |endverbatim
 \finecode
-
-\sezione Merging
-
-Ci sono delle occasioni in cui rebasare un branch rispetto ad un altro non \`e
-possibile in quanto, per esempio, il repository \`e stato esposto al pubblico ed
-\`e cattiva creanza cambiare la storia senza un buon motivo. D'altro canto ci
-sono procedure per cui il merge \`e l'operazione standard
-(\code{pull}$=$\code{fetch}$+$\code{merge}) e quindi conviene conoscere il modo
-un cui gestirlo in maniera adeguata.
-
-Il nostro SCM usa il cosidetto ``three-way'' merge come metodo di base, cio\`e
-utilizza tre versioni per ogni file: le versioni di cui si sta cercando di
-eseguire il merge ed un antenato comune come mostrato nel grafo seguente
-\input merge-scheme
-Noi desideriamo tutti i cambiamenti che ci sono fra
-\tikz\node[scale=.4,draw,fill=green,shape=circle]{A}; e
-\tikz\node[scale=.4,draw,fill=green,shape=circle]{O}; oltre che fra
-\tikz\node[scale=.4,draw,fill=green,shape=circle]{B}; e
-\tikz\node[scale=.4,draw,fill=green,shape=circle]{O};. Ovviamente non \`e sempre
-cos\`i facile in quanto nel repo possono essere gi\`a presenti dei merge
-incrociati (\evidenzia<criss-cross merge>) che non rendono unici l'antenato ed
-in questo caso si effettua un merge ``ricorsivo'' in cui si trova un antenato
-successivo dei precedenti.
-
-A parte la scelta della strategia, alla fine possono esserci dei conflitti
-durante l'operazione che devono essere risolti manualmente (Linus docet).
 
 \sezione Coito interrotto
 
@@ -206,11 +225,7 @@ In alcuni casi ci ritroviamo con del codice avente dei problemi di vario tipo e
 per un qualche motivo (magari proprio perch\'e il codice \`e nostro, oppure
 perch\'e quel baco ci sta fottendo il filesystem) siamo noi a dovercene occupare
 e anche in questo git ci d\`a una mano non indifferente.
-\figuratikz[background rectangle/.style=
-	{draw=blue!50,fill=blue!20,rounded corners=1ex},
-  tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw},
-	show background rectangle]
-	\tikzstyle{every node}=[draw,fill=green,shape=circle,distance=5mm];
+\figuratikz[show background rectangle]
 	\path (0:0cm)    node (v0) {};
 	\node (v1) [right=of v0];
 	\node (v2) [right=of v1];
@@ -267,7 +282,8 @@ l'ultimo commit con il contenuto attuale dell'indice.
 
 Nel secondo caso, molto pi\`u ``pericoloso'' in quanto deve modificare le
 relazione fra blob/tree/commit esistenti, creandone anche di nuovi, non
-modificando le parti utili; a questo \` utile \code{git filter-branch}
+modificando le parti utili; a questo \`e utile \code{git filter-branch}:
+per modificare il nome e la mail dell'autore in tutti i commit
 \iniziacode
 $ git filter-branch --env-filter \
   "export GIT_AUTHOR_NAME='Nome Cognome' \
@@ -276,3 +292,39 @@ $ git filter-branch --env-filter \
   GIT_COMMITTER_EMAIL=email@dominio.org"
 |endverbatim
 \finecode
+oppure per eliminare un file che non si desidera presentare nel repository
+\iniziacode
+git filter-branch --index-filter 'git rm --cached <file>' HEAD
+|endverbatim
+\finecode
+
+\sezione Quando qualcosa va storto
+
+Pu\`o succedere che mentre si compiono azioni che vanno a riscrivere un branch
+tramite rebasing o merging, il risultato non \`e quello che ci si aspettava,
+vuoi per un errore nell'esecuzione dei comandi. In questo caso si pu\`o
+utilizzare il comando \code{reflog} che tiene il log dei movimenti delle
+referenze; di default il comando mostra il movimento di \code{HEAD}
+\iniziacode
+08baf42... HEAD@{0}: commit: Fixed behaviour of 'x11_loop_with_timeout()' with z
+4123dde... HEAD@{1}: commit (amend): More rational Makefile organization.
+e273b0b... HEAD@{2}: HEAD^: updating HEAD
+07d377a... HEAD@{3}: commit (amend): Check for events also in timeout case.
+8988b3d... HEAD@{4}: commit: Check for events also in timeout case.
+e273b0b... HEAD@{5}: commit: More rational Makefile organization.
+ad604af... HEAD@{6}: rebase -i (squash): updating HEAD
+12e2cde... HEAD@{7}: rebase -i (pick): updating HEAD
+ad604af... HEAD@{8}: checkout: moving from master to ad604af3647684668364fa9146f
+b40cc0d... HEAD@{9}: commit: More rational Makefile organization.
+|endverbatim
+\finecode
+
+Il fatto fondamentale \`e che ogni cambiamento che noi apportiamo alla struttura
+DAG pu\`o essere recuperata in quanto ogni oggetto viene mantenuto nel database
+fino a che comandi di pulizia (come per esempio \code{gc}) non vengono eseguiti.
+La prima colonna indica lo \code{sha1} del commit in cui si trova a quel punto
+\code{HEAD}, la seconda invece indica in quale ordine fosse; di seguito viene
+indicato in quale circostanza \`e avvenuto il cambiamento (commit, rebasing,
+merging, amending). Una volta trovata la referenza che recupera quanto perso, si
+pu\`o eseguire un \code{git checkout -b NOMEBRANCH REF} per avere un branch con
+le caratteristiche utili.

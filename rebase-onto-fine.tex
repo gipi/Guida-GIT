@@ -1,8 +1,4 @@
-\figuranofloattikz[background rectangle/.style=
-	{draw=blue!50,fill=blue!20,rounded corners=1ex},
-  tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw},
-	show background rectangle]
-	\tikzstyle{every node}=[draw,fill=green,shape=circle,distance=5mm,scale=.6];
+\figuranofloattikz[show background rectangle]
 	\path (0:0cm)    node (v0);
 	\node (v1) [right=of v0];
 	\node (v2) [right=of v1];
@@ -26,10 +22,7 @@
 	\draw [->] (z2) -- (z3);
 % grazie ad "anchor=" posso impostare che la punta della freccia sia
 % il punto rispetto a cui la disegna
-	\node (master) at (v5.north)
-    [anchor=tip,fill=red!50,single arrow,rotate=315,draw] {master};
-	\node (topic) at (w2.north)
-    [anchor=tip,fill=red!50,single arrow,rotate=315,draw] {topic};
-	\node (next) at (z3.north)
-    [anchor=tip,fill=red!50,single arrow,rotate=315,draw] {next};
+	\node[head] (master) at (v5.north) {master};
+	\node[head] (topic) at (w2.north) {topic};
+	\node[head] (next) at (z3.north) {next};
 \finefiguranofloattikz

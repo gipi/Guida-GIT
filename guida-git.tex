@@ -1,4 +1,5 @@
 \input macro
+\font\commitfn=cmtt10 at 5pt
 %\parfillskip 10pt plus 1fil
 % capitoli
 \line{\capitolofont GIT}
@@ -8,18 +9,28 @@
 \input getting-started
 \input comandi
 \input workflow
+\input informazioni
 \input sharing
 
 \input submodule
 
 \capitolo Miscellanea
 
+\sezione Interfaccie grafiche
+
+Siccome molto spesso risulta pu\`u comodo avere una rappresentazione grafica
+della struttura di grafico aciclico, nel tempo sono stati sviluppati molti
+strumenti a questo scopo; il pi\`u famoso e distribuito assieme al repo di git
+\`e gitk
+
+Un'altra opzione interessante \`e \code{gitg}.
+
 \sezione Debugging del push
 
 Per qualche oscura ragione potrebbe non funzionare correttamente il push tramite
 \code{ssh} e quindi di seguito un metodo molto interessante
 \iniziacode
-$ echo "ssh -v $@" > ssh_debug_wrapper
+$ echo "ssh -v -v -v $@" > ssh_debug_wrapper
 $ GIT_SSH="./ssh_debug_wrapper" git push
 |endverbatim
 \finecode
@@ -85,6 +96,9 @@ git daemon.
 
 \link http://lwn.net/Articles/210045/: Articolo che descrive alcune
 caratteristiche e funzionamento di git.
+
+\link http://gitready.com/: Sito che raccoglie ``trucchi del giorno''
+relativi all'uso di git.
 
 \vfill\eject
 

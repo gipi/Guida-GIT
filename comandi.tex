@@ -16,8 +16,9 @@ informazioni. Li elencher\`o omettendo il termine git.
 \elemento\code{init}: Inizializza il repository creando la directory {\tt .git}
 e tutte le relative sottodirectory.
 
-\elemento\code{fetch}: Esegue il download di oggetti e referenze da un altro
-repository.
+\elemento\code{fetch}: Esegue il download di referenze da un altro
+repository e gli oggetti necessari per ricostruirli ponendo in
+\url{$GIT_DIR/FETCH_HEAD} le informazioni necessarie.
 
 \elemento\code{pull}: Come il precedente, ma esegue anche un merge con il ramo
 di lavoro del repo locale.
@@ -79,7 +80,10 @@ oggetti e referenze di un repository.
 
 \`E molto importante, anche ai fini della comprensione del codice e delle sue
 modifiche, avere sott'occhio quale \`e la descrizione data dall'autore di una
-modifica, le righe modificate o anche spostate da un file all'altro
+modifica, le righe modificate o anche spostate da un file all'altro; normalmente
+questi programmi danno informazioni solo a partire dalla directory dove vengono
+lanciati, tramite l'opzione \code{--full-name} \`e possibile forzare la
+descrizione a partire dalla root del repository.
 
 \elemento\code{diff}: Visualizza differenze fra commit visualizzandoli nel
 formato \evidenzia<unidiff>\notapiepagina{Lo ``unified format'' ha nella sua

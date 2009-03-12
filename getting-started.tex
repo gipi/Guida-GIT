@@ -108,8 +108,8 @@ Graficamente questo pu\`o essere tramite uno schema del seguente tipo
 	\draw[->] (commit) |- (tree);
 	\draw[->] (commit) |- (author);
 	\draw[->] (commit) |- (committer);
-	\draw[->] (tree) |- (blob1);
-  \draw[->] (tree) |- (blob2);
+	\draw[->] (tree)   |- (blob1);
+  \draw[->] (tree)   |- (blob2);
 \endfiguratikz[Rappresentazione del grafo di un commit]
 
 Personalmente trovo molto utile dare una rappresentazione delle
@@ -134,14 +134,14 @@ arrow,rotate=315,fill=yellow!50]{tag}; quella relativa ad una tag.
 	\node (w1) [below right=of v1];
 	\node (w2) [right=of w1];
 	\node (w3) [right=of w2];
-	\draw [->] (v0) -- (v1);
-	\draw [->] (v1) -- (v2);
-	\draw [->] (v2) -- (v3);
-	\draw [->] (v3) -- (v4);
-	\draw [->] (v4) -- (v5);
-	\draw [->] (v1) -- (w1);
-	\draw [->] (w1) -- (w2);
-	\draw [->] (w2) -- (w3);
+	\draw [<-] (v0) -- (v1);
+	\draw [<-] (v1) -- (v2);
+	\draw [<-] (v2) -- (v3);
+	\draw [<-] (v3) -- (v4);
+	\draw [<-] (v4) -- (v5);
+	\draw [<-] (v1) -- (w1);
+	\draw [<-] (w1) -- (w2);
+	\draw [<-] (w2) -- (w3);
 % grazie ad "anchor=" posso impostare che la punta della freccia sia
 % il punto rispetto a cui la disegna
 	\node (HEAD) at (v5.north)
@@ -152,49 +152,44 @@ arrow,rotate=315,fill=yellow!50]{tag}; quella relativa ad una tag.
 \endfiguratikz[Schema di un repository standard con due rami di sviluppo ed una
 tag ``v1.0'' che identifica un certo punto dello sviluppo.]
 
+\sezione Implementazione
+
+L'implementazione iniziale su cui Linus Torvalds ha costruito questo strumento
+\`e stata ispirata dalla concezione ``alla filesystem''
+
 \`E importante anche tenere conto di come \`e strutturato effettivamente la
 directory \code{.git/}
 \verbatimescapechar\@
 \iniziacode
-.git
-|-- FETCH_HEAD
+.git/
 |-- HEAD
-|-- ORIG_HEAD
 |-- branches
 |-- config
 |-- description
-|-- gitk.cache
 |-- hooks
-|   |-- applypatch-msg
-|   |-- commit-msg
-|   |-- post-commit
-|   |-- post-receive
-|   |-- post-update
-|   |-- pre-applypatch
-|   |-- pre-commit
-|   |-- pre-rebase
-|   `-- update
+|   |-- applypatch-msg.sample
+|   |-- commit-msg.sample
+|   |-- post-commit.sample
+|   |-- post-receive.sample
+|   |-- post-update.sample
+|   |-- pre-applypatch.sample
+|   |-- pre-commit.sample
+|   |-- pre-rebase.sample
+|   |-- prepare-commit-msg.sample
+|   `-- update.sample
 |-- index
 |-- info
 |   `-- exclude
-|-- logs
-|   |-- HEAD
-|   `-- refs
 |-- objects
 |   |-- info
 |   `-- pack
 `-- refs
     |-- heads
-    |-- remotes
     `-- tags
 @endverbatim
 \verbatimescapechar\|
 \finecode
 
-\sezione Filesystem
-
-L'implementazione iniziale su cui Linus Torvalds ha costruito questo strumento
-\`e stato
 
 \sezione git
 
@@ -211,6 +206,27 @@ rispettivamente le opzioni \code{--git-dir=} o \code{--work-tree=} (in
 alternativa esistono le variabili di ambiente \verbatim GIT_DIR |endverbatim e
 \verbatim GIT_WORK_TREE|endverbatim).
 
+Altre variabili d'ambiente utilizzate sono
+\unorderedlist
+\li\verbatim GIT_INDEX_FILE |endverbatim
+\li\verbatim GIT_OBJECT_DIRECTORY |endverbatim
+\li\verbatim GIT_ALTERNATE_OBJECT_DIRECTORIES |endverbatim
+\li\verbatim GIT_CEILING_DIRECTORIES |endverbatim
+\li\verbatim GIT_AUTHOR_NAME |endverbatim
+\li\verbatim GIT_AUTHOR_EMAIL |endverbatim
+\li\verbatim GIT_AUTHOR_DATE |endverbatim
+\li\verbatim GIT_COMMITTER_NAME |endverbatim
+\li\verbatim GIT_COMMITTER_EMAIL |endverbatim
+\li\verbatim GIT_COMMITTER_DATE |endverbatim
+\li\verbatim GIT_DIFF_OPTS |endverbatim
+\li\verbatim GIT_EXTERNAL_DIFF |endverbatim
+\li\verbatim GIT_MERGE_VERBOSITY |endverbatim
+\li\verbatim GIT_PAGER |endverbatim
+\li\verbatim GIT_SSH |endverbatim
+\li\verbatim GIT_FLUSH |endverbatim
+\li\verbatim GIT_TRACE |endverbatim
+\endunorderedlist
+
 \sezione Revisioni
 
 Come \`e stato detto sin dall'inizio, questo applicativo \`e un gestore di
@@ -224,27 +240,28 @@ revisioni
 dell'oggetto oppure una sua sottosequenza
 \li Una referenza simbolica contenuta che verr\`a cercata in questo ordine
 restituendo la prima trovata 
-\orderedlist
+\unorderedlist
 \li\verbatim $GITDIR/<name>|endverbatim
 \li\verbatim $GITDIR/refs/<name>|endverbatim
 \li\verbatim $GITDIR/refs/tags/<name>|endverbatim
 \li\verbatim $GITDIR/refs/heads/<name>|endverbatim
 \li\verbatim $GITDIR/refs/remote/<name>|endverbatim
 \li\verbatim $GITDIR/refs/remote/<name>/HEAD|endverbatim
-\endorderedlist
+\endunorderedlist
 \noindent tenendo conto che esistono referenze che hanno significati particolari:
 \code{HEAD} rappresenta il commit su cui l'attuale working tree \`e basato
 (quindi ad ogni cambio di branch \`e lui ad essere cambiato assieme al working
 tree).
 \endunorderedlist
-
-\noindent \`E possibile anche specificare anche una referenza a partire da una notazione
-temporale
+\`E possibile anche specificare anche una referenza derivata tramite una
+notazione indiciale o temporale, la grammatica \`e la seguente:
 \smallskip
-\noindent\line{\hfil\verbatim <ref>@{DATE SPECIFICATION} |endverbatim\hfil}
-\noindent\line{\hfil\verbatim <ref>@{ORDINAL SPECIFICATION} |endverbatim\hfil}
-\noindent\line{\hfil\verbatim <rev>^ |endverbatim\hfil}
-\noindent\line{\hfil\verbatim <rev>~N |endverbatim\hfil}
+\unorderedlist
+\li\verbatim <ref>@{DATE SPECIFICATION} |endverbatim
+\li\verbatim <ref>@{ORDINAL SPECIFICATION} |endverbatim
+\li\verbatim <rev>^ |endverbatim
+\li\verbatim <rev>~N |endverbatim
+\endunorderedlist
 \smallskip
 Esiste un particolare sottocomando di git per ottenere il nome della referenza
 effettivamente indicata attraverso uno dei metodi appena descritti: \code{git
@@ -294,7 +311,15 @@ ciclo di rilascio di questa distribuzione). Quindi chi vuole il massimo si
 consiglia di seguire queste istruzioni ed installare l'ultima versione
 (preferibilmente stabile).
 
-Prima di tutto se non lo sia ha gi\`a si scarica l'albero dei sorgenti
+Prima di tutto ci sono alcune dipendenze basilari da rispettare, le librerie
+\code{zlib} (fondamentali), le librerie \code{curl} (disabilitabili tramite
+l'opzione \code{NO\_CURL}\notapiepagina{Consiglio di leggere \code{Makefile} per
+avere qualche info in caso di installazioni particolari.} e non si avr\`a la
+possibilit\`a di utilizzare \code{http://} e \code{https://} come protocolli di
+trasporto.); alcune dipendenze per la documentazione: \code{asciidoc} e
+\code{xmlto}.
+
+Se non lo sia ha gi\`a si scarica l'albero dei sorgenti
 \iniziacode
 $ git clone git://git.kernel.org/pub/scm/git/git.git
 |endverbatim
@@ -319,13 +344,24 @@ $ ln -s git-vx.x.x.x git
 Da notare che la prima volta non sar\`a necessario eseguire l'unlinking della
 directory \code{git} e neanche un pulling dell'albero dei sorgenti, per\`o
 sar\`a necessario settare il path nella vostra shell (nel mio caso in
-\code{.bashrc})
+\code{.bashrc}) sia per gli eseguibili, per le pagine di manuale nonch\`e per le
+comodissime funzionalit\`a di completamento della shell bash; il seguente pezzo
+di codice permette di quanto appena detto:
 \iniziacode
 PATH=/opt/git/bin:$PATH
+MANPATH=/opt/git/share/man/:$MANPATH
+
+GIT_SOURCE_ROOT=/usr/src/git/
+
+if [ -f $GIT_SOURCE_ROOT/contrib/completion/git-completion.bash ];
+then
+  . $GIT_SOURCE_ROOT/contrib/completion/git-completion.bash
+fi
 |endverbatim
 \finecode
 verificando che \code{git --version} vi restituisca la versione corretta
 (inserire in quell'ordine la directory dell'installazione previene il sistema
-dall'usare come eseguibile un eventuale pacchetto pi\`u vecchio). Purtroppo a
-meno di workaround non conosciuti da me \code{man} non restituir\`a la pagina di
-help corretta, consiglio di usare \code{git help}.
+dall'usare come eseguibile un eventuale pacchetto pi\`u vecchio).
+%Purtroppo a meno di workaround non 
+%conosciuti da me \code{man} non restituir\`a la pagina di
+%help corretta, consiglio di usare \code{git help}.

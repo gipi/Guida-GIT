@@ -88,34 +88,34 @@ tutto). Per pushare usare \url{git push git@}
 REPOS_PATH=/home/git/repositories/
 
 function log_err(){
-	echo $1
-	exit 1
+  echo $1
+  exit 1
 }
 
 function create_dir(){
-	echo "+ creating dir '$1'"
-	mkdir $1 || log_err "I couldn't create $1"
+  echo "+ creating dir '$1'"
+  mkdir $1 || log_err "I couldn't create $1"
 }
 
 function init_git_dir(){
-	echo "+ create empty git repo"
-	GIT_DIR=$1 git-init-db || log_err "git init failed"
+  echo "+ create empty git repo"
+  GIT_DIR=$1 git-init-db || log_err "git init failed"
 }
 
 function change_ownership(){
-	echo "+ change ownership"
-	chown -R git:git $1 || log_err "chown failed"
+  echo "+ change ownership"
+  chown -R git:git $1 || log_err "chown failed"
 }
 
 function enable_export(){
-	echo "+ enabling export"
-	touch $1/git-daemon-export-ok
+  echo "+ enabling export"
+  touch $1/git-daemon-export-ok
 }
 
 if [ -z "$1" ]
 then
-	echo "oh my god! no args?"
-	exit 1
+  echo "oh my god! no args?"
+  exit 1
 fi
 
 NEW_REPO=$1
@@ -125,5 +125,16 @@ create_dir ${NEW_REPO_PATH}
 init_git_dir ${NEW_REPO_PATH}
 enable_export ${NEW_REPO_PATH}
 change_ownership ${NEW_REPO_PATH}
+|endverbatim
+\finecode
+
+Nel caso non si abbia la disponibilit\`a di un servizio e/o il collegamento
+tramite rete \`e possibile effettuare le operazioni tramite il comando
+\code{bundle}.
+
+\iniziacode
+user@remote: $ git bundle create repo.bundle HEAD
+... sposta repo.bundle in local
+user@local: $ git clone repo.bundle
 |endverbatim
 \finecode
