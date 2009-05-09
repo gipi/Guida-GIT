@@ -1,6 +1,7 @@
 \input macro
 \font\commitfn=cmtt10 at 5pt
 %\parfillskip 10pt plus 1fil
+\parindent=10pt
 % capitoli
 \line{\capitolofont GIT}
 \vfil
@@ -11,19 +12,23 @@
 \input workflow
 \input informazioni
 \input sharing
-
 \input submodule
+\input config
+\input hooks
+\input interfaccie-grafiche
+\input low-level
 
 \capitolo Miscellanea
 
-\sezione Interfaccie grafiche
+\sezione Installazione non standard on the remote side
 
-Siccome molto spesso risulta pu\`u comodo avere una rappresentazione grafica
-della struttura di grafico aciclico, nel tempo sono stati sviluppati molti
-strumenti a questo scopo; il pi\`u famoso e distribuito assieme al repo di git
-\`e gitk
+Magari sulla macchina remota l'installazione \`e in posizione non banale quindi
+per evitare scleri
 
-Un'altra opzione interessante \`e \code{gitg}.
+\iniziacode
+$ git [clone || pull] --upload-pack /path/to/git-upload-pack [URL]
+|endverbatim
+\finecode
 
 \sezione Debugging del push
 
@@ -34,6 +39,99 @@ $ echo "ssh -v -v -v $@" > ssh_debug_wrapper
 $ GIT_SSH="./ssh_debug_wrapper" git push
 |endverbatim
 \finecode
+
+\sezione Avere permessi per referenza
+
+Nella sezione \url{contrib/hooks/update-paranoid} esiste uno script che permette
+di avere un accesso controllato pi\`u finemente di quanto permetta
+\code{gitosis}. Trascrivo qui il contenuto della parte di documentazione
+contenuta nel file stesso
+
+\iniziacode
+Invoked as: update refname old-sha1 new-sha1
+
+This script is run by git-receive-pack once for each ref that the
+client is trying to modify.  If we exit with a non-zero exit value
+then the update for that particular ref is denied, but updates for
+other refs in the same run of receive-pack may still be allowed.
+
+We are run after the objects have been uploaded, but before the
+ref is actually modified.  We take advantage of that fact when we
+look for "new" commits and tags (the new objects won't show up in
+`rev-list --all`).
+
+This script loads and parses the content of the config file
+"users/$this_user.acl" from the $acl_branch commit of $acl_git ODB.
+The acl file is a git-config style file, but uses a slightly more
+restricted syntax as the Perl parser contained within this script
+is not nearly as permissive as git-config.
+
+Example:
+
+  [user]
+    committer = John Doe <john.doe@example.com>
+    committer = John R. Doe <john.doe@example.com>
+
+  [repository "acls"]
+    allow = heads/master
+    allow = CDUR for heads/jd/
+    allow = C    for ^tags/v\\d+$
+
+For all new commit or tag objects the committer (or tagger) line
+within the object must exactly match one of the user.committer
+values listed in the acl file ("HEAD:users/$this_user.acl").
+
+For a branch to be modified an allow line within the matching
+repository section must be matched for both the refname and the
+opcode.
+
+Repository sections are matched on the basename of the repository
+(after removing the .git suffix).
+
+The opcode abbrevations are:
+
+  C: create new ref
+  D: delete existing ref
+  U: fast-forward existing ref (no commit loss)
+  R: rewind/rebase existing ref (commit loss)
+
+if no opcodes are listed before the "for" keyword then "U" (for
+fast-forward update only) is assumed as this is the most common
+usage.
+
+Refnames are matched by always assuming a prefix of "refs/".
+This hook forbids pushing or deleting anything not under "refs/".
+
+
+Refnames that start with ^ are Perl regular expressions, and the ^
+is kept as part of the regexp.  \\ is needed to get just one \, so
+\\d expands to \d in Perl.  The 3rd allow line above is an example.
+
+Refnames that don't start with ^ but that end with / are prefix
+matches (2nd allow line above); all other refnames are strict
+equality matches (1st allow line).
+
+Anything pushed to "heads/" (ok, really "refs/heads/") must be
+a commit.  Tags are not permitted here.
+
+Anything pushed to "tags/" (err, really "refs/tags/") must be an
+annotated tag.  Commits, blobs, trees, etc. are not permitted here.
+Annotated tag signatures aren't checked, nor are they required.
+
+The special subrepository of 'info/new-commit-check' can
+be created and used to allow users to push new commits and
+tags from another local repository to this one, even if they
+aren't the committer/tagger of those objects.  In a nut shell
+the info/new-commit-check directory is a Git repository whose
+objects/info/alternates file lists this repository and all other
+possible sources, and whose refs subdirectory contains symlinks
+to this repository's refs subdirectory, and to all other possible
+sources refs subdirectories.  Yes, this means that you cannot
+use packed-refs in those repositories as they won't be resolved
+correctly.
+|endverbatim
+\finecode
+
 
 \sezione Creare branch indipendente o commit senza parenti
 
@@ -47,59 +145,6 @@ $ git commit --allow-empty
 |endverbatim
 \finecode
 
-\sezione Low level
-
-Per la compressione a basso livello viene usata la libreria zlib
-(\url{http://www.zlib.net}) unica vera dipendenza di git; i loose object nel
-database vengono compressi tramite esso ed \`e possibile ottenere un programma
-per la decompressione a riga di comando alla pagina
-\url{http://www.zlib.net/zpipe.c}. Una volta compilato \`e possibile ottenere la
-decompressione di un oggetto tramite \code{zpipe -d < .git/objects/xx/} in
-maniera analoga al comando \code{git cat-file -p SHA1} bench\'e il secondo dia
-un risultato formattato in maniera molto pi\`u human-readable.
-
-Volendo essere pi\`u ``creativi'' esiste il comando \code{hash-object} che crea
-un blob ed il comando \code{mktree} che crea un \code{tree} salvandoli nella
-directory \code{.git/objects/} e restituendo lo \code{sha1} relativo. Infine per
-creare un commit esiste il comando \code{commit-tree} che prende come primo
-argomento un tree (o pi\`u d'uno) e dallo \code{stdin} il messaggio relativo;
-ovviamente ci viene restituito lo \code{sha1} del commit e salvato del database
-l'oggetto relativo.
-
-\capitolo Linkografia
-
-Questo strumento \`e in sviluppo vertiginoso e non esistono libri specifici
-(tranne alcune eccezzioni) sull'argomento che \`e sempre in movimento; essendo
-inoltre uno strumento nato e cresciuto in ambito ipertestuale, sembra pi\`u
-consono creare una linkografia piuttosto che una bibliografia.
-\bigskip
-%\doublecolumns
-\link http://git.or.cz/: Homepage di git, contenente gli archivi con le varie
-versioni scaricabili, la documentazione; sito molto tecnico.
-
-\link http://book.git-scm.com/: Pagina indirizzata alla creazione di un manuale
-pi\`u user friendly rispetto alla documentazione dell'homepage.
-
-\link http://whygitisbetterthanx.com/: Pagina di confronto fra gli altri
-strumenti di versioning e git.
-
-\link
-http://betterexplained.com/articles/intro-to-distributed-version-control-illustrated/:
-Guida visuale agli strumenti di revisione distribuiti.
-
-\link http://mendicantbug.com/2008/11/30/10-reasons-to-use-git-for-research/:
-Una dissertazione dell'utilizzo di git in ambiente di ricerca.
-
-\link http://vafer.org/blog/20080115011320:
-Istruzioni abbastanza dettagliate per pubblicare un repository git attraverso
-git daemon.
-
-\link http://lwn.net/Articles/210045/: Articolo che descrive alcune
-caratteristiche e funzionamento di git.
-
-\link http://gitready.com/: Sito che raccoglie ``trucchi del giorno''
-relativi all'uso di git.
-
-\vfill\eject
+\input linkografia
 
 \end

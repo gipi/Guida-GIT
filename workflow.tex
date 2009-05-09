@@ -105,6 +105,29 @@ anche ai relativi path.
 A parte la scelta della strategia, alla fine possono esserci dei conflitti
 durante l'operazione che devono essere risolti manualmente (Linus docet).
 
+\iniziacode
+$ git show :2:<conflicted file> # mostra il contenuto dal master
+$ git show :3:<conflicted file> # mostra il contenuto dal locale
+
+$ git checkout --ours <conflicted file>   # prende contenuto dal master
+$ git checkout --theirs <conflicted file> # prende contenuto dal locale
+|endverbatim
+\finecode
+
+in versioni precedenti alla ? i comandi sopra possono essere scritti come
+
+\iniziacode
+$ git reset -- <conflicted file>
+$ git checkout MERGE_HEAD <conflicted file> # prende contenuto dal locale
+|endverbatim
+\finecode
+
+\iniziacode
+$ git reset -- <conflicted file>
+$ git checkout ORIG_HEAD <conflicted file> # prende contenuto dal locale
+|endverbatim
+\finecode
+
 \sezione Rebasing
 
 Supponiamo di aver creato un branch locale di nome ``topic'' su cui effettuare i

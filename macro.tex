@@ -105,9 +105,14 @@ Date:   Thu Feb 26 19:30:55 2009 +0100
 	\smallskip
 }%
 \def\code #1{{\tt #1}}
-\def\iniziacode{\smallskip\noindent\line{\hrulefill}\smallskip\verbatim}
+\def\iniziacode{%
+  \smallskip\noindent
+  %\line{\hrulefill}
+  \smallskip\verbatim}
 \edef\finecode{%\endverbatim
-  \smallskip\noindent\line{\hrulefill}\goodbreak\smallskip\noindent}
+  \smallskip\noindent
+  %\line{\hrulefill}
+  \goodbreak\smallskip\noindent}
 \def\figura#1\par{%
 	\midinsert%
 		% da mettere a posto
@@ -122,6 +127,12 @@ Date:   Thu Feb 26 19:30:55 2009 +0100
 	\smallskip
 	\hfil\vbox{\advance\hsize by-1cm\noindent #2}
 	\medskip
+}
+\def\includecode#1\par{%
+\medskip
+\listing{#1}
+\medskip
+\noindent
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\licenza{%

@@ -163,6 +163,10 @@ directory \code{.git/}
 \iniziacode
 .git/
 |-- HEAD
+|-- COMMIT_MESSAGE   # ultimo messaggio di commit
+|-- MERGE_HEAD       # sha1 del branch di cui si sta effettuando un merge
+|-- ORIG_HEAD        # sha1 del branch in cui si sta effettuando il merge
+|-- FETCH_HEAD       # sha1 della head aggiornata con l'ultimo fetch
 |-- branches
 |-- config
 |-- description
@@ -177,7 +181,7 @@ directory \code{.git/}
 |   |-- pre-rebase.sample
 |   |-- prepare-commit-msg.sample
 |   `-- update.sample
-|-- index
+|-- index           # indice
 |-- info
 |   `-- exclude
 |-- objects
@@ -301,6 +305,15 @@ Per indicare i genitori di un dato commit esistono due ulteriori abbreviazioni:
 \code{r1} ma esclude tutti i suoi genitori (in pratica \`e una abbreviazione per
 indicare un singolo commit in comandi che richiedono dei range). 
 
+\sezione Refspecs
+
+Una refspec \`e utilizzata in comandi che si interfacciano con repository
+esterni (\code{pull}, \code{push} e \code{fetch} per esempio).
+
+Il formato di una refspec \`e un segno \code{+} opzionale, seguito da una
+referenza sorgente, dal simbolo \code{:} e seguito da una referenza di
+destinazione.
+
 \sezione Installazione
 
 Come abbiamo detto lo sviluppo di git \`e molto veloce e spesso ci si ritrova a
@@ -327,9 +340,9 @@ $ git clone git://git.kernel.org/pub/scm/git/git.git
 e si installa seguendo il ciclo ad ogni uscita di versione stabile (nel seguito
 si indicher\`a con \code{vx.x.x.x} una versione che si intende installare)
 \iniziacode
-$ git pull
+$ git fetch
 $ git tag
-$ git checkout vx.x.x.x
+$ git checkout -f vx.x.x.x
 $ ./configure --prefix=/opt/git-vx.x.x.x
 $ make
 $ make install
@@ -353,6 +366,7 @@ MANPATH=/opt/git/share/man/:$MANPATH
 
 GIT_SOURCE_ROOT=/usr/src/git/
 
+export GIT_PS1_SHOWDIRTYSTATE=1
 if [ -f $GIT_SOURCE_ROOT/contrib/completion/git-completion.bash ];
 then
   . $GIT_SOURCE_ROOT/contrib/completion/git-completion.bash

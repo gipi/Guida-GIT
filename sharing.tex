@@ -4,6 +4,8 @@ Caratteristica indispensabile per un programma di revisione distribuita, \`e
 quella di poter condividere semplicemente il proprio lavoro con gli altri, in
 maniera indipendente ed autonoma.
 
+\sezione Installazione servizio tramite inetd
+
 Prima di tutto si controlla che ci sia la seguente riga in \code{/etc/services}
 \iniziacode
 git 9418/tcp
@@ -38,6 +40,9 @@ adduser --system --shell /usr/bin/git-shell --gecos 'git version control'
 --group --disabled-password --home /home/git git
 |endverbatim
 \finecode
+
+\sezione Installazione servizio tramite runlevel
+
 Al posto di usare \url{inetd} si pu\`o creare un servizio a parte utilizzando
 una cosa similare al seguente script il quale utilizza magistralmente le regole
 standard che potete trovare in \url{/lib/lsb/init-functions} ed il mitico
@@ -73,9 +78,13 @@ esac
 exit 0
 |endverbatim
 \finecode
-Salvato come \url{/etc/init.d/git-daemon}, renderlo eseguibile (\url{chmod +x})
-ed eseguire \url{update-rc.d git-daemon defaults} per impostare l'avvio nel
-runlevel standard.
+Salvato come \url{/etc/init.d/git-daemon} eseguiamo le seguenti operazioni
+\iniziacode
+# chmod +x
+# update-rc.d git-daemon defaults
+|endverbatim
+\finecode
+per renderlo eseguibile ed impostare l'avvio nel runlevel standard.
 
 Il seguente script serve per inizializzare un repository vuoto su cui pushare
 successivamente (un po' come succede con \url{gitorious}); \`e inteso da
@@ -127,6 +136,75 @@ enable_export ${NEW_REPO_PATH}
 change_ownership ${NEW_REPO_PATH}
 |endverbatim
 \finecode
+
+\sezione Mailing list
+
+Il progetto stesso di git \`e sviluppato da una comunit\`a open source, da
+persone localizzate geograficamente nei luoghi pi\`u disparati, basti pensare
+che il maintainer \`e giapponese, mentre i collaboratori sono prevalentemente
+europei e americani. Il confronto sul codice, le decisioni riguardanti le
+modifiche avvengono via mailing list (che personalmente consiglio di seguire per
+avere idea di cosa voglia dire collaborare in un progetto di questo tipo)
+attraverso gli strumenti che questo programma stesso mette a disposizione.
+
+Il comando effettivo \`e \code{send-email} che pu\`o appoggiarsi ad un programma
+alla \code{sendmail} per produrre il flusso di mail voluto; nel caso non abbiate
+il programma configurato \`e possibile usare \code{msmtp} con il seguente file
+di configurazione
+
+\includecode msmtprc
+
+impostando come valore in \code{sendemail.server} il path alla sua
+installazione.
+\sezione Gitosis
+
+\code{Gitosis} \`e un layer di amministrazione di accesso ai repository tramite
+un unico account accessibile tramite \code{ssh}
+
+\iniziacode
+$ git clone git://eagain.net/gitosis.git
+$ cd gitosis
+$ python setup.py install [ --prefix=/path/to/ ]
+|endverbatim
+\finecode
+Poi si ``installa'' la chiave ssh da usare come amministratore\notapiepagina{Qui
+ci pu\`o essere qualche questione dei permessi o dell'utente a cui devono essere
+assegnati i repository.}
+\iniziacode
+$ gitosis-init < id_rsa.pub
+Initialized empty Git repository in ./
+Initialized empty Git repository in ./
+|endverbatim
+\finecode
+Siccome \code{gitosis} si basa in maniera massiccia sull'hook \code{post-update}
+\`e necessario renderlo eseguibile\notapiepagina{Nel caso in cui si abbiano
+installate librerie e binari in posti inusuali, \`e consigliabile inserire 
+\iniziacode
+#!/bin/bash
+PYTHONPATH=/path/to/python/library
+PATH=/path/to/git/binary:$PATH
+|endverbatim
+\finecode
+nella parte iniziale dell'hook in questione.
+}
+\iniziacode
+$ chmod 755 /path/to/repositories/gitosis-admin.git/hooks/post-update
+|endverbatim
+\finecode
+A questo punto \`e possibile clonare il repository in locale per effettuare la
+configurazione per l'accesso:
+\iniziacode
+$ git clone git@your.domain:gitosis-admin.git
+$ cd gitosis-admin
+$ ls -l
+-rw-r--r-- 1 packz packz  303 23 apr 09:46 gitosis.conf
+drwxr-xr-x 2 packz packz 4096 23 apr 09:46 keydir
+|endverbatim
+\finecode
+(notare come il percorso \url{repositories/} non venga incluso, rendendo
+trasparente l'accesso).
+
+\sezione Bundle
 
 Nel caso non si abbia la disponibilit\`a di un servizio e/o il collegamento
 tramite rete \`e possibile effettuare le operazioni tramite il comando

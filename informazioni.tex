@@ -38,3 +38,25 @@ $ git log --pretty=oneline --stat \| \\
    sed -n 's/^ \([0-9]*\) files changed, \([0-9]\) insertions(+), \([0-9]\) deletions(-)/\1 \2 \3/p'
 |endverbatim
 \finecode
+
+\sezione Differenze
+
+Quello che effettivamente noi registriamo con il nostro repository \`e
+l'evoluzione del codice e il messaggio nel commit rappresenta solo un riassunto
+delle modifiche apportate al codice; per conoscere effettivamente come si \`e
+modificato oppure si sta modificando il codice git ha la sua versione del tool
+standard nel mondo unix per questo scopo: diff. Ecco un piccolo assaggio delle
+sue funzionalit\`a:
+
+\iniziacode
+$ git diff           # differenze fra working tree e indice
+$ git diff --cached  # differenze fra indice e ultimo commit
+$ git diff HEAD      # differenze fra working tree e ultimo commit
+|endverbatim
+\finecode
+
+\sezione Autori
+
+Ovviamente le informazioni immagazzinate insieme al commit sono molto utili in
+certi ambiti, per esempio per scoprire chi originariamente ha apportato una
+certa modifica ad una certa riga: a questo viene in aiuto \code{git blame}.

@@ -1,4 +1,13 @@
 \capitolo Submodule
 
 Un discorso a parte meritano i submodule, cio\`e il modo che ha git di gestire
-un insieme di repository in uno principale
+un insieme di repository in uno principale.
+
+Per facilitare prove si pu\`o usare un repository con molti submodules, quale
+per esempio quello di \code{xorg}
+\iniziacode
+$ git clone git://people.freedesktop.org/~whot/xorg.git
+$ cd xorg
+$ git submodule update --init
+|endverbatim
+\finecode

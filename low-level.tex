@@ -1,0 +1,29 @@
+\capitolo Low level
+
+Tutti gli oggetti descritti nella struttura DAG sono compresse per una migliore
+occupazione su disco tramite libreria zlib
+(\url{http://www.zlib.net}) unica vera dipendenza di git; \`e possibile ottenere
+un programma per la decompressione a riga di comando alla pagina
+\url{http://www.zlib.net/zpipe.c}. Una volta compilato \`e possibile
+decomprimere un oggetto tramite 
+\iniziacode
+$ zpipe -d < .git/objects/xx/
+|endverbatim
+\finecode
+in
+maniera analoga al comando \code{git cat-file -p SHA1} bench\'e il secondo dia
+un risultato formattato in maniera molto pi\`u human-readable.
+
+\sezione Tree
+
+Volendo essere pi\`u ``creativi'' esiste il comando \code{hash-object} che crea
+un blob ed il comando \code{mktree} che crea un \code{tree} salvandoli nella
+directory \code{.git/objects/} e restituendo lo \code{sha1} relativo. Infine per
+creare un commit esiste il comando \code{commit-tree} che prende come primo
+argomento un tree (o pi\`u d'uno) e dallo \code{stdin} il messaggio relativo;
+ovviamente ci viene restituito lo \code{sha1} del commit e salvato del database
+l'oggetto relativo.
+
+L'archiviazione dei symbolic link (generati tramite \code{ln -s}) \`e effettuata
+tramite il \code{tree}, un bit nei permessi imposta il contenuto al path del
+file reale.

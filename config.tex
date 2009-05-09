@@ -1,0 +1,54 @@
+\capitolo Config
+
+Il comportamento di \code{git} \`e altamente configurabile attraverso delle
+impostazioni effettuate attraverso il comando \code{config} sia a livello
+globale che per ogni singolo repository.
+
+\def\man#1:#2\par{%
+\medskip
+\noindent{\tt #1}
+\smallskip
+\hangindent60pt\hang #2\par
+}
+\def\true{{\tt true}\relax}
+\def\false{\code{false}}
+\def\GITWORKTREE{\code{GIT\_WORK\_TREE}}
+\man core.fileMode:
+Se impostato a \code{false}, le differenze nell'``executable bit'' tra l'indice
+e il working tree sono ignorate; utile nei filesystem come il \code{FAT}.
+
+\man core.symlink: Se impostato a \code{false} i symbolic link sono checked out come file di testo.
+
+\man core.autocrlf:
+Se impostato a \code{true}, converte la sequenza \code{CRLF} alla fine delle linee dei
+file di testo in \code{LF} quando vengono letti dal filesystem e convertiti
+inversamente quando scritti. Questa variabile pu\`o anche impostata ad
+\code{input}, in qual caso la conversione avviene solo in lettura, mentre la
+scrittura mantiene \code{LF}. I file sono considerati testo solo in base al loro
+contenuto.
+
+\man core.safecrlf:
+Se \code{true}, \code{git} controlla se la conversione come impostata da
+\code{core.auto.crlf} \`e reversibile.
+
+\man core.bare:
+Se impostato a \true il repository si assume sia bare e che non abbia un working
+tree associato ad esso. Di conseguenza un certo numero di comandi che si
+aspettando un working tree sono disabilitati. Di default un repository che
+finisce in \url{/.git} si assume che sia non bare.
+
+\man core.worktree:
+Imposta il path del working tree. Pu\`o essere reimpostato tramite la variabile
+d'ambiente \GITWORKTREE o l'opzione \code{--work-tree}; se non
+specificato con nessuna di queste allora si assume che il working tree sia la
+directory di lavoro corrente.
+
+\man core.excludesfile:
+           In addition to .gitignore (per-directory) and .git/info/exclude,
+           git looks into this file for patterns of files which are not meant
+           to be tracked. See gitignore(5).
+
+\man commit.template:
+           Specify a file to use as the template for new commit messages.
+
+
