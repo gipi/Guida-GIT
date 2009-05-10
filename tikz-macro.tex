@@ -1,0 +1,74 @@
+%% TIKZ ROUTINE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input tikz
+\def\figuratikz{\noindent\midinsert\hfil\tikzpicture}
+% non funzionano in locale?
+\newbox\bx
+\newdimen\dimbx
+\newdimen\maxdimbx\maxdimbx=10cm
+\newcount\figuranumero
+\def\endfiguratikz[#1]{%
+  \endtikzpicture%
+  \global\advance\figuranumero by 1%
+  \hfil%
+  \smallskip%
+  \noindent%
+  % calcolo la dimensione del box che deve contenere
+  % la didascalia e TODO: controllare che non sia
+  % maggiore di un tot (tipo 10cm).
+  \setbox\bx\hbox{#1}%
+  \dimbx=\wd\bx%
+  \ifdim\dimbx>\maxdimbx\dimbx=\maxdimbx\fi
+	\line{%
+    \hfil\vbox{%
+      \noindent\hsize=\dimbx%
+      \llap{\bf	Fig.\the\figuranumero\hfil: }\unhbox\bx\hfil%
+    }\hfil}%
+  \endinsert%
+  \noindent%
+}
+\def\figuranofloattikz{\medskip\noindent\hfil\tikzpicture}
+\def\finefiguranofloattikz{\endtikzpicture\hfil\medskip\noindent}
+%%%% figura in mezzo al paragrafo %%%%%%
+\newbox\tikzbox
+\newdimen\tikzboxwt
+\newdimen\tikzboxht
+\newcount\lineanumero
+\def\figuratikzpar{%
+  \lineanumero=\the\prevgraf
+  \setbox\tikzbox\hbox\bgroup\tikzpicture
+}%
+\def\endfiguratikzpar{%
+  \endtikzpicture%
+  \egroup%
+  \tikzboxwt=\wd\tikzbox\advance\tikzboxwt by 1cm
+  \tikzboxht=\ht\tikzbox
+  \hangafter=-10
+  \hangindent=\tikzboxwt
+  \vadjust{%
+    \smash{%
+      \rlap{\hfil%
+        \lower\tikzboxht\vbox{\hsize=\tikzboxwt\noindent\unhbox\tikzbox}
+      \hfil}
+    }
+  }
+}
+\usetikzlibrary{shapes,positioning,folding,backgrounds}
+\def\tikzcommit#1{
+\bgroup
+\baselineskip=5pt
+Commit d47abe6767
+
+Author: Pinco Pallo
+
+Date:   Thu Feb 26 19:30:55 2009 +0100
+
+\indent #1
+\egroup
+}
+% imposto alcune tipologie di nodi
+\tikzset{every node/.style={draw,fill=green,shape=circle,distance=5mm}}
+\tikzset{commit/.style={shape=rectangle, rounded corners=1ex, font=\commitfn, text width=5cm}}
+\tikzset{background rectangle/.style={draw=blue!50,fill=blue!20,rounded corners=1ex}}
+\tikzset{tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw}}
+\tikzset{head/.style={anchor=tip,single arrow, scale=.5,fill=red!50,rotate=315,draw}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
