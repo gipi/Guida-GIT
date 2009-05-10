@@ -77,20 +77,13 @@ eventualemente) da cui esso si origina assieme alla data in cui questo commit
 
 Questa \`e la rappresentazione di un commit con i metadati relativi ad esso;
 come potete notare ci sono tutte le info di cui abbiamo accennato sopra.
-\iniziacode
-tree 4d4ca73a5a4348ecb75c46d333b3aec4c9956bdb
-author Packz Enoch <packz@autistici.org> 1223658096 +0200
-committer Packz Enoch <packz@autistici.org> 1223658096 +0200
 
-Primo commit.
+\includecode commit-dag
 
-Riscrivere le routine e` una merda.
-|finecode
 Questo punta ad un tree
-\iniziacode
-100644 blob 311a79555017a6d986a3103887c5a5d94851609d	Makefile
-100644 blob 722d7fec3a2ae6c5edf4f5f56acb49f6c2f39a00	guida-git.tex
-|finecode
+
+\includecode tree-dag
+
 che punta a sua volta a due oggetti (che non mostro per non inondare di inutile
 merda la pagina) il cui contenuto sono il codice sorgente di questo testo (ai
 suoi albori) e il suo Makefile.
