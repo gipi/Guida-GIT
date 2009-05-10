@@ -27,8 +27,7 @@ per evitare scleri
 
 \iniziacode
 $ git [clone || pull] --upload-pack /path/to/git-upload-pack [URL]
-|endverbatim
-\finecode
+|finecode
 
 \sezione Debugging del push
 
@@ -37,8 +36,7 @@ Per qualche oscura ragione potrebbe non funzionare correttamente il push tramite
 \iniziacode
 $ echo "ssh -v -v -v $@" > ssh_debug_wrapper
 $ GIT_SSH="./ssh_debug_wrapper" git push
-|endverbatim
-\finecode
+|finecode
 
 \sezione Avere permessi per referenza
 
@@ -129,8 +127,7 @@ to this repository's refs subdirectory, and to all other possible
 sources refs subdirectories.  Yes, this means that you cannot
 use packed-refs in those repositories as they won't be resolved
 correctly.
-|endverbatim
-\finecode
+|finecode
 
 
 \sezione Creare branch indipendente o commit senza parenti
@@ -142,8 +139,7 @@ $ git symbolic-ref HEAD refs/heads/mybranch
 $ git rm --cached -r .
 $ rm *
 $ git commit --allow-empty
-|endverbatim
-\finecode
+|finecode
 
 \input linkografia
 

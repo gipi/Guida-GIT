@@ -104,15 +104,19 @@ Date:   Thu Feb 26 19:30:55 2009 +0100
 	\egroup
 	\smallskip
 }%
+%%%%%%%%%%%%%%% VERBATIM STUFFS %%%%%%%%%%%%%%%%%%
 \def\code #1{{\tt #1}}
+
 \def\iniziacode{%
   \smallskip\noindent
-  %\line{\hrulefill}
   \smallskip\verbatim}
-\edef\finecode{%\endverbatim
+
+\edef\finecode{
+  \endverbatim
   \smallskip\noindent
-  %\line{\hrulefill}
   \goodbreak\smallskip\noindent}
+%%%%%%%%%%%%%% END VERBATIM STUFFS %%%%%%%%%%%%%%%%%%
+
 \def\figura#1\par{%
 	\midinsert%
 		% da mettere a posto

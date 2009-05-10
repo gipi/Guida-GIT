@@ -9,8 +9,7 @@ maniera indipendente ed autonoma.
 Prima di tutto si controlla che ci sia la seguente riga in \code{/etc/services}
 \iniziacode
 git 9418/tcp
-|endverbatim
-\finecode
+|finecode
 che sta ad indicare che il servizio \code{git://} viene offerto alla porta 9418
 tramite protocollo \code{TCP}; il modo pi\`u veloce di tirare su il servizio \`e
 tramite il ``super'' demone \code{inetd(8)} che si preoccupa di gestire per noi
@@ -21,8 +20,7 @@ git stream  tcp nowait  nobody  /usr/bin/git
   git daemon --inetd --verbose --export-all --interpolated-path=/var/www/git/%D
   /var/www/git/project1
   /var/www/project2
-|endverbatim
-\finecode
+|finecode
 Di seguito si riavvia \code{inetd} lanciando un bel \code{SIGHUP} tramite
 \code{pkill -HUP inetd} e per i test successivi si controlla il file
 \code{/var/log/syslog}. Per motivi di sicurezza sarebbe utile che il repo venga
@@ -38,8 +36,7 @@ accedere in push).
 \iniziacode
 adduser --system --shell /usr/bin/git-shell --gecos 'git version control'
 --group --disabled-password --home /home/git git
-|endverbatim
-\finecode
+|finecode
 
 \sezione Installazione servizio tramite runlevel
 
@@ -76,14 +73,12 @@ stop)   log_daemon_msg "Stopping git-daemon"
         ;;
 esac
 exit 0
-|endverbatim
-\finecode
+|finecode
 Salvato come \url{/etc/init.d/git-daemon} eseguiamo le seguenti operazioni
 \iniziacode
 # chmod +x
 # update-rc.d git-daemon defaults
-|endverbatim
-\finecode
+|finecode
 per renderlo eseguibile ed impostare l'avvio nel runlevel standard.
 
 Il seguente script serve per inizializzare un repository vuoto su cui pushare
@@ -134,8 +129,7 @@ create_dir ${NEW_REPO_PATH}
 init_git_dir ${NEW_REPO_PATH}
 enable_export ${NEW_REPO_PATH}
 change_ownership ${NEW_REPO_PATH}
-|endverbatim
-\finecode
+|finecode
 
 \sezione Mailing list
 
@@ -165,8 +159,7 @@ un unico account accessibile tramite \code{ssh}
 $ git clone git://eagain.net/gitosis.git
 $ cd gitosis
 $ python setup.py install [ --prefix=/path/to/ ]
-|endverbatim
-\finecode
+|finecode
 Poi si ``installa'' la chiave ssh da usare come amministratore\notapiepagina{Qui
 ci pu\`o essere qualche questione dei permessi o dell'utente a cui devono essere
 assegnati i repository.}
@@ -174,8 +167,7 @@ assegnati i repository.}
 $ gitosis-init < id_rsa.pub
 Initialized empty Git repository in ./
 Initialized empty Git repository in ./
-|endverbatim
-\finecode
+|finecode
 Siccome \code{gitosis} si basa in maniera massiccia sull'hook \code{post-update}
 \`e necessario renderlo eseguibile\notapiepagina{Nel caso in cui si abbiano
 installate librerie e binari in posti inusuali, \`e consigliabile inserire 
@@ -183,14 +175,12 @@ installate librerie e binari in posti inusuali, \`e consigliabile inserire
 #!/bin/bash
 PYTHONPATH=/path/to/python/library
 PATH=/path/to/git/binary:$PATH
-|endverbatim
-\finecode
+|finecode
 nella parte iniziale dell'hook in questione.
 }
 \iniziacode
 $ chmod 755 /path/to/repositories/gitosis-admin.git/hooks/post-update
-|endverbatim
-\finecode
+|finecode
 A questo punto \`e possibile clonare il repository in locale per effettuare la
 configurazione per l'accesso:
 \iniziacode
@@ -199,8 +189,7 @@ $ cd gitosis-admin
 $ ls -l
 -rw-r--r-- 1 packz packz  303 23 apr 09:46 gitosis.conf
 drwxr-xr-x 2 packz packz 4096 23 apr 09:46 keydir
-|endverbatim
-\finecode
+|finecode
 (notare come il percorso \url{repositories/} non venga incluso, rendendo
 trasparente l'accesso).
 
@@ -214,5 +203,4 @@ tramite rete \`e possibile effettuare le operazioni tramite il comando
 user@remote: $ git bundle create repo.bundle HEAD
 ... sposta repo.bundle in local
 user@local: $ git clone repo.bundle
-|endverbatim
-\finecode
+|finecode

@@ -85,14 +85,12 @@ committer Packz Enoch <packz@autistici.org> 1223658096 +0200
 Primo commit.
 
 Riscrivere le routine e` una merda.
-|endverbatim
-\finecode
+|finecode
 Questo punta ad un tree
 \iniziacode
 100644 blob 311a79555017a6d986a3103887c5a5d94851609d	Makefile
 100644 blob 722d7fec3a2ae6c5edf4f5f56acb49f6c2f39a00	guida-git.tex
-|endverbatim
-\finecode
+|finecode
 che punta a sua volta a due oggetti (che non mostro per non inondare di inutile
 merda la pagina) il cui contenuto sono il codice sorgente di questo testo (ai
 suoi albori) e il suo Makefile.
@@ -159,40 +157,37 @@ L'implementazione iniziale su cui Linus Torvalds ha costruito questo strumento
 
 \`E importante anche tenere conto di come \`e strutturato effettivamente la
 directory \code{.git/}
-\verbatimescapechar\@
 \iniziacode
 .git/
-|-- HEAD
-|-- COMMIT_MESSAGE   # ultimo messaggio di commit
-|-- MERGE_HEAD       # sha1 del branch di cui si sta effettuando un merge
-|-- ORIG_HEAD        # sha1 del branch in cui si sta effettuando il merge
-|-- FETCH_HEAD       # sha1 della head aggiornata con l'ultimo fetch
-|-- branches
-|-- config
-|-- description
-|-- hooks
-|   |-- applypatch-msg.sample
-|   |-- commit-msg.sample
-|   |-- post-commit.sample
-|   |-- post-receive.sample
-|   |-- post-update.sample
-|   |-- pre-applypatch.sample
-|   |-- pre-commit.sample
-|   |-- pre-rebase.sample
-|   |-- prepare-commit-msg.sample
-|   `-- update.sample
-|-- index           # indice
-|-- info
-|   `-- exclude
-|-- objects
-|   |-- info
-|   `-- pack
+||-- HEAD
+||-- COMMIT_MESSAGE   # ultimo messaggio di commit
+||-- MERGE_HEAD       # sha1 del branch di cui si sta effettuando un merge
+||-- ORIG_HEAD        # sha1 del branch in cui si sta effettuando il merge
+||-- FETCH_HEAD       # sha1 della head aggiornata con l'ultimo fetch
+||-- branches
+||-- config
+||-- description
+||-- hooks
+||   ||-- applypatch-msg.sample
+||   ||-- commit-msg.sample
+||   ||-- post-commit.sample
+||   ||-- post-receive.sample
+||   ||-- post-update.sample
+||   ||-- pre-applypatch.sample
+||   ||-- pre-commit.sample
+||   ||-- pre-rebase.sample
+||   ||-- prepare-commit-msg.sample
+||   `-- update.sample
+||-- index           # indice
+||-- info
+||   `-- exclude
+||-- objects
+||   ||-- info
+||   `-- pack
 `-- refs
-    |-- heads
+    ||-- heads
     `-- tags
-@endverbatim
-\verbatimescapechar\|
-\finecode
+|finecode
 
 
 \sezione git
@@ -201,8 +196,10 @@ Il cuore di tutto \`e il comando \code{git} che rappresenta il cancello di
 ingresso per le potenzialit\`a dello sviluppo di codice; siccome lo sviluppo \`e
 molto veloce, state attenti a quale versione state utilizzando \gitversion. Allo
 stato attuale il comando ha il seguente help
-\githelp
-\noindent che d\`a una visione di insieme
+
+\includecode githelp
+
+che d\`a una visione di insieme
 delle possibilit\`a offerte. Tramite esso e le
 sue opzioni \`e possibile impostare anche la directory contenente il database
 del repository (usualmente \code{.git/}) oppure il workiing tree impostando
@@ -335,8 +332,7 @@ trasporto.); alcune dipendenze per la documentazione: \code{asciidoc} e
 Se non lo sia ha gi\`a si scarica l'albero dei sorgenti
 \iniziacode
 $ git clone git://git.kernel.org/pub/scm/git/git.git
-|endverbatim
-\finecode
+|finecode
 e si installa seguendo il ciclo ad ogni uscita di versione stabile (nel seguito
 si indicher\`a con \code{vx.x.x.x} una versione che si intende installare)
 \iniziacode
@@ -351,8 +347,7 @@ $ make install-doc
 $ cd /opt/
 $ unlink git
 $ ln -s git-vx.x.x.x git
-|endverbatim
-\finecode
+|finecode
 
 Da notare che la prima volta non sar\`a necessario eseguire l'unlinking della
 directory \code{git} e neanche un pulling dell'albero dei sorgenti, per\`o
@@ -371,8 +366,7 @@ if [ -f $GIT_SOURCE_ROOT/contrib/completion/git-completion.bash ];
 then
   . $GIT_SOURCE_ROOT/contrib/completion/git-completion.bash
 fi
-|endverbatim
-\finecode
+|finecode
 verificando che \code{git --version} vi restituisca la versione corretta
 (inserire in quell'ordine la directory dell'installazione previene il sistema
 dall'usare come eseguibile un eventuale pacchetto pi\`u vecchio).

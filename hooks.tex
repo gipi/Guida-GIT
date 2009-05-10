@@ -53,8 +53,7 @@ Invocato da \code{git-receive-pack} appena prima di aggiornare le referenze;
 questo hook \`e eseguito una volta per ogni referenza secondo il seguente schema
 \iniziacode
 update refname oldobject newobject
-|endverbatim
-\finecode
+|finecode
 un valore di uscita zero di questo script permette l'aggiornamento della
 referenza
 
@@ -70,8 +69,7 @@ dal suo repository bare, nel momento stesso in cui si pusha nel branch master
 #!/bin/sh
 
 git checkout -f
-|endverbatim
-\finecode
+|finecode
 
 \sezione post-update
 
