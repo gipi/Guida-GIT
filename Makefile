@@ -11,11 +11,14 @@ all: $(GUIDA)
 %.ps: %.dvi
 	dvips $^ -o
 
-%.pdf: $(SRC) $(SRC_TEX)
-	pdftex $<
+%.pdf: $(SRC) $(SRC_TEX) hyplain
+	pdftex -fmt hyplain -output-format pdf $<
 
 %.dvi: %.tex
 	tex $^
+
+hyplain:
+	pdftex -ini -etex hyplain
 
 versione.tex:
 	VERSIONE=$$(git --version 2>/dev/null | sed -n 's/git version //p'); \
@@ -32,4 +35,4 @@ tree-dag.tex:
 	git cat-file -p HEAD^{tree} > $@
 
 clean:
-	rm -vf $(GUIDA) *.pgf *.log $(GENERATED_SRC)
+	rm -vf $(GUIDA) *.pgf *.log $(GENERATED_SRC) hyplain*
