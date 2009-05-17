@@ -1,5 +1,5 @@
 SRC_TEX=$(wildcard *.tex)
-GENERATED_SRC = versione.tex githelp.tex commit-dag.tex tree-dag.tex
+GENERATED_SRC = versione.tex githelp.tex commit-dag.tex tree-dag.tex reflog.tex
 SRC += guida-git.tex $(GENERATED_SRC)
 
 FRASE="(La versione installata da chi ha compilato questo documento \`e "
@@ -33,6 +33,9 @@ commit-dag.tex:
 
 tree-dag.tex:
 	git cat-file -p HEAD^{tree} > $@
+
+reflog.tex:
+	git reflog | head -n 10 > $@
 
 clean:
 	rm -vf $(GUIDA) *.pgf *.log $(GENERATED_SRC) hyplain*

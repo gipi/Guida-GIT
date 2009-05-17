@@ -312,19 +312,10 @@ Pu\`o succedere che mentre si compiono azioni che vanno a riscrivere un branch
 tramite rebasing o merging, il risultato non \`e quello che ci si aspettava,
 vuoi per un errore nell'esecuzione dei comandi. In questo caso si pu\`o
 utilizzare il comando \code{reflog} che tiene il log dei movimenti delle
-referenze; di default il comando mostra il movimento di \code{HEAD}
-\iniziacode
-08baf42... HEAD@{0}: commit: Fixed behaviour of 'x11_loop_with_timeout()' with z
-4123dde... HEAD@{1}: commit (amend): More rational Makefile organization.
-e273b0b... HEAD@{2}: HEAD^: updating HEAD
-07d377a... HEAD@{3}: commit (amend): Check for events also in timeout case.
-8988b3d... HEAD@{4}: commit: Check for events also in timeout case.
-e273b0b... HEAD@{5}: commit: More rational Makefile organization.
-ad604af... HEAD@{6}: rebase -i (squash): updating HEAD
-12e2cde... HEAD@{7}: rebase -i (pick): updating HEAD
-ad604af... HEAD@{8}: checkout: moving from master to ad604af3647684668364fa9146f
-b40cc0d... HEAD@{9}: commit: More rational Makefile organization.
-|finecode
+referenze; di default il comando mostra il movimento di \code{HEAD} (subito
+sotto si mostra l'output di \code{reflog} per il codice di questa guida)
+
+\includecode reflog
 
 Il fatto fondamentale \`e che ogni cambiamento che noi apportiamo alla struttura
 DAG pu\`o essere recuperata in quanto ogni oggetto viene mantenuto nel database
