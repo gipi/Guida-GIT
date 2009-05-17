@@ -138,9 +138,10 @@ Per creare un commit chiamato \code{mybranch} senza parenti
 (in pratica un branch slegato)
 \iniziacode
 $ git symbolic-ref HEAD refs/heads/mybranch
-$ git rm --cached -r .
-$ rm *
-$ git commit --allow-empty
+$ rm .git/index
+$ git clean -fdx
+$ git add <qualcosa>
+$ git commit
 |finecode
 
 \input linkografia
