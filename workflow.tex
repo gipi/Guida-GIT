@@ -172,6 +172,16 @@ aggiornato lasciando \code{next} nella sua situazione precedente
 \`E possibile inoltre raffinare l'azione di modifica di un branch tramite
 l'opzione \code{--interactive}, \code{-i} di \code{git rebase}:
 
+\sezione Conflitti
+
+Fin qui abbiamo solo accennato alla possibilit\`a che ci siano degli errori
+durante i processi di rebasing e merging, tuttavia nella vita reale queste sono
+le situazioni pi\`u problematiche da gestire, sopratutto per la possibilit\`a di
+perdere tempo e lavoro nel ``fondere'' codice che magari non conoscete a fondo.
+
+L'indice di \git ha la particolarit\`a di poter memorizzare fino a 3 versioni
+del tree dei sorgenti
+
 \sezione Terzo collaboratore
 
 Succede che ci sia qualcun'altro che lavora ad uno stesso repo ma che ha
