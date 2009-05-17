@@ -1,5 +1,11 @@
 SRC_TEX=$(wildcard *.tex)
-GENERATED_SRC = versione.tex githelp.tex commit-dag.tex tree-dag.tex reflog.tex
+GENERATED_SRC += versione.tex
+GENERATED_SRC += githelp.tex
+GENERATED_SRC += commit-dag.tex
+GENERATED_SRC += tree-dag.tex
+GENERATED_SRC += reflog.tex
+GENERATED_SRC += merge-conflict.tex
+GENERATED_SRC += hello-conflict.tex
 SRC += guida-git.tex $(GENERATED_SRC)
 
 FRASE="(La versione installata da chi ha compilato questo documento \`e "
@@ -11,7 +17,7 @@ all: $(GUIDA)
 %.ps: %.dvi
 	dvips $^ -o
 
-%.pdf: $(SRC) $(SRC_TEX) hyplain
+$(GUIDA): $(SRC) $(SRC_TEX) hyplain
 	pdftex -fmt hyplain -output-format pdf $<
 
 %.dvi: %.tex
@@ -36,6 +42,11 @@ tree-dag.tex:
 
 reflog.tex:
 	git reflog | head -n 10 > $@
+
+merge-conflict.tex hello-conflict.tex:
+	git checkout merge-conflict
+	git merge fucking-merge-conflict > merge-conflict.tex \
+		|| cp hello.c hello-conflict.tex && git checkout -f master
 
 clean:
 	rm -vf $(GUIDA) *.pgf *.log $(GENERATED_SRC) hyplain*
