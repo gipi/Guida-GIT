@@ -41,6 +41,13 @@
   \endverbatim
   \smallskip\noindent
   \goodbreak\smallskip\noindent}
+
+\def\includecode#1\par{%
+\medskip
+\listing{#1}
+\medskip
+\noindent
+}
 %%%%%%%%%%%%%% END VERBATIM STUFFS %%%%%%%%%%%%%%%%%%
 
 \def\figura#1\par{%
@@ -57,12 +64,6 @@
 	\smallskip
 	\hfil\vbox{\advance\hsize by-1cm\noindent #2}
 	\medskip
-}
-\def\includecode#1\par{%
-\medskip
-\listing{#1}
-\medskip
-\noindent
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\licenza{%
