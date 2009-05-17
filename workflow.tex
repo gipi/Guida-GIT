@@ -288,6 +288,21 @@ e anche in questo git ci d\`a una mano non indifferente.
 \endfiguratikz[Schema di un repository dove sappiamo che il commit da cui parte
 \`e uno ``buono'', mentre quello finale \`e ``cattivo'']
 
+Questo comando \`e molto versatile, anche perch\`e possiede un certo numero di
+sottocomandi che permettono una scelta mirata delle operazioni da compiere:
+
+\elemento\code{visualize}: Attraverso \code{gitk} mostra le revisioni in ballo
+
+\elemento\code{log}: 
+
+\elemento\code{replay}: 
+
+\elemento\code{run}: Usa uno script che testa per ogni revisione la sua
+idoneit\`a; lo script usa il suo exit status per indicare a \code{git bisect} se
+la revisione in esame \`e corretta o no.
+
+\elemento\code{skip}: Salta una revisione.
+
 \sezione Riscrivere la storia
 
 Possono esserci vari casi in cui ci si ritrova a dover tornare sui nostri passi,

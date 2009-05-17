@@ -92,7 +92,7 @@ suoi albori) e il suo Makefile.
 
 Graficamente questo pu\`o essere tramite uno schema del seguente tipo
 \figuratikz
-\path (0:0cm) node[fill=red!50,rounded rectangle] (commit) {commit};
+\path (0:0cm) node[minimum size=1cm, fill=red!50,rounded rectangle=1cm, line width=3pt] (commit) {commit};
 \path node[below right=of commit,fill=green!50,rounded rectangle] (author) {author};
 \path node[below=of author,fill=green!50,rounded rectangle] (committer) {committer};
 \path node[below=of committer,fill=green!50,rounded rectangle] (tree) {tree};
@@ -110,9 +110,8 @@ operazioni di questo strumento: nel seguito indicheremo con
 \tikz\node[draw,fill=green,shape=circle]; i vari commit che compongono il
 repository e con  una referenza
 interna del repository stesso; esistono vari tipi di referenze, noi indicheremo
-con\tikz\node[scale=.4,draw, single arrow,rotate=315,fill=red!50]{ref}; quella
-di un branch oppure con \tikz\node[scale=.4,draw, single
-arrow,rotate=315,fill=yellow!50]{tag}; quella relativa ad una tag.
+con\tikz\node[head]{ref}; quella
+di un branch oppure con \tikz\node[tag]{tag}; quella relativa ad una tag.
 \figuratikz[background rectangle/.style=
 	{draw=blue!50,fill=blue!20,rounded corners=1ex},
   tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw},
@@ -137,13 +136,11 @@ arrow,rotate=315,fill=yellow!50]{tag}; quella relativa ad una tag.
 	\draw [<-] (w2) -- (w3);
 % grazie ad "anchor=" posso impostare che la punta della freccia sia
 % il punto rispetto a cui la disegna
-	\node (HEAD) at (v5.north)
-    [anchor=tip,scale=.4,fill=red!50,single arrow,rotate=315,draw] {HEAD};
-	\node (branch1) at (w3.north)
-    [anchor=tip,scale=.5,fill=red!50,single arrow,rotate=315,draw] {branch1};
+	\node[head] (HEAD) at (v5.north) {master};
+	\node[head] (branch1) at (w3.north) {topic};
   \node[tag] at (v3.north) {v1.0};
 \endfiguratikz[Schema di un repository standard con due rami di sviluppo ed una
-tag ``v1.0'' che identifica un certo punto dello sviluppo.]
+tag ``v1.0'' che identifica (per esempio) una release stabile.]
 
 \sezione Implementazione
 
