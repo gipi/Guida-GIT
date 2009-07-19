@@ -323,12 +323,13 @@ Prima di tutto ci sono alcune dipendenze basilari da rispettare, le librerie
 l'opzione \code{NO\_CURL}\notapiepagina{Consiglio di leggere \code{Makefile} per
 avere qualche info in caso di installazioni particolari.} e non si avr\`a la
 possibilit\`a di utilizzare \code{http://} e \code{https://} come protocolli di
-trasporto.); alcune dipendenze per la documentazione: \code{asciidoc} e
-\code{xmlto}.
+trasporto.) oltre che le librerie \code{tcl-tk}; alcune dipendenze per la
+documentazione: \code{asciidoc} e \code{xmlto}.
 
 Se non lo sia ha gi\`a si scarica l'albero dei sorgenti
 \iniziacode
-$ git clone git://git.kernel.org/pub/scm/git/git.git
+$ wget http://www.kernel.org/pub/software/scm/git/git-<put your version here>.tar.gz
+$ tar zxvf git-<put your version here>.tar.gz
 |finecode
 e si installa seguendo il ciclo ad ogni uscita di versione stabile (nel seguito
 si indicher\`a con \code{vx.x.x.x} una versione che si intende installare)
