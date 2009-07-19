@@ -137,11 +137,11 @@ correctly.
 Per creare un commit chiamato \code{mybranch} senza parenti
 (in pratica un branch slegato)
 \iniziacode
-$ git symbolic-ref HEAD refs/heads/mybranch
-$ rm .git/index
-$ git clean -fdx
-$ git add <qualcosa>
-$ git commit
+$ git symbolic-ref HEAD refs/heads/mybranch    # crea una nuova referenza
+$ rm .git/index                                # cancella il prossimo commit
+$ git clean -fdx                               # cancella il working tree (opzionale)
+$ git add <qualcosa>                           # aggiunge elementi per il commit
+$ git commit                                   # commit senza parenti
 |finecode
 
 \input linkografia
