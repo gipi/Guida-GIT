@@ -1,4 +1,11 @@
-\capitolo Submodule
+\capitolo Scatole cinesi
+
+Un problema che non era stato affrontato dal principio dello sviluppo di \git
+era la possibilit\`a di poter tenere sotto versioning un progetto composto da
+altri sottoprogetti mantenuti tramite \git stesso. In seguito \`e stata
+sviluppata un comando che permette questo.
+
+\sezione Submodule
 
 Un discorso a parte meritano i submodule, cio\`e il modo che ha git di gestire
 un insieme di repository in uno principale.
@@ -10,3 +17,29 @@ $ git clone git://people.freedesktop.org/~whot/xorg.git
 $ cd xorg
 $ git submodule update --init
 |finecode
+
+\sezione Subtree
+
+Esiste una particolare strategia da usare per il merge che permette di tenere
+distinti dei progetti per poi unirli come ``subdirectories''. Supponiamo di
+avere un progetto raggiungibile ad un \URL \verbatim <repo>|endverbatim e che
+desideriamo inserire il contenuto del branch \verbatim <branchname>|endverbatim
+di quel repo (in maniera da tenere anche il versioning of course) nella
+directory \url{another-project/}
+
+\iniziacode
+$ git remote add -f <remotename> <repo>
+$ git merge -s ours --no-commit <remotename>/<branchname>
+$ git read-tree --prefix=another-project/ -u <remotename>/<branchname>
+$ git commit
+|finecode
+In seguito si potranno scaricare i nuovi commit usando la strategia
+\code{subtree} con il comando \code{pull}
+
+\iniziacode
+$ git pull -s subtree <remotename> master
+|finecode
+\`E stato anche presentato un nuovo comando \git che permetta di rendere questi
+passaggi pi\`u semplici; inoltre \`e possibile ri-dividere il repo nei suoi
+progetti che lo compongono. Ne parlano qui
+\url{http://alumnit.ca/~apenwarr/log/?m=200904#30}.
