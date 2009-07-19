@@ -172,6 +172,9 @@ aggiornato lasciando \code{next} nella sua situazione precedente
 \`E possibile inoltre raffinare l'azione di modifica di un branch tramite
 l'opzione \code{--interactive}, \code{-i} di \code{git rebase}:
 
+{\bf Quando si rebasa interattivamente passando per dei commit che
+aggiungono dei file, ricordarsi di usare git status per evitare di perderli!!!}
+
 \sezione Conflitti
 
 Fin qui abbiamo solo accennato alla possibilit\`a che ci siano degli errori
@@ -179,8 +182,24 @@ durante i processi di rebasing e merging, tuttavia nella vita reale queste sono
 le situazioni pi\`u problematiche da gestire, sopratutto per la possibilit\`a di
 perdere tempo e lavoro nel ``fondere'' codice che magari non conoscete a fondo.
 
-L'indice di \git ha la particolarit\`a di poter memorizzare fino a 3 versioni
-del tree dei sorgenti
+Quando avviene un conflitto succedono le seguenti cose
+\iniziaelenco
+\li\HEAD rimane immutata
+\li I file che non hanno subito conflitti sono aggiornato sia nell'index che nel
+working tree.
+\li Nel caso in un file ci siano conflitti, l'index memorizza fino a tre
+versioni di questo: \code{stage1} contiene la versione dall'antenato comune,
+\code{stage2} dalla \HEAD, \code{stage3} dal branch remoto. Il working tree
+contiene il risultato del 3-way merge con dei marker \code{<<<<}, \code{===} e
+\code{>>>>}.
+\fineelenco
+A questo punto si possono fare due cose
+\iniziaelenco
+\li Si decide di non effettuare il merge: \code{git reset --hard HEAD}
+riporter\`a l'index a combaciare con l'ultimo commit.
+\li Risolvere i conflitti: si editano i file scegliendo a mano quali combiamenti
+includere, usare \code{git add}, e poi committare il risultato.
+\fineelenco
 
 \includecode merge-conflict
 
