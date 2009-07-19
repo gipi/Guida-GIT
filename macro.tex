@@ -39,8 +39,8 @@
 
 \edef\finecode{
   \endverbatim
-  \smallskip\noindent
-  \goodbreak\smallskip\noindent}
+  \smallskip
+  \goodbreak\noindent}
 
 \def\includecode#1\par{%
 \medskip
@@ -66,6 +66,16 @@
 	\medskip
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\iniziaelenco{
+  \medskip
+  \bgroup
+  \unorderedlist
+}
+\def\fineelenco{
+  \endunorderedlist
+  \egroup
+  \medskip\noindent
+}
 \def\licenza{%
 \vbox{Permission is granted to copy, distribute and/or modify the documentation
 under the terms of the gnu Free Documentation License, Version 1.2
@@ -81,3 +91,5 @@ license is included in the section entitled gnu Public License.}
 \def\githelp{\smallskip\input githelp \smallskip}
 \def\GITDIR#1{\code{$GIT_DIR/#1}}
 \def\git{\code{git}}
+\def\HEAD{\code{HEAD}}
+\def\URL{\code{URL}}
