@@ -8,6 +8,8 @@ GENERATED_SRC += merge-conflict.tex
 GENERATED_SRC += hello-conflict.tex
 SRC += guida-git.tex $(GENERATED_SRC)
 
+SHA1_FIRST_COMMIT=$(shell git log --reverse --pretty=%H | head -n 1)
+
 FRASE="(La versione installata da chi ha compilato questo documento \`e "
 
 GUIDA += guida-git.pdf
@@ -35,10 +37,10 @@ githelp.tex:
 	git --help > $@
 
 commit-dag.tex:
-	git cat-file -p HEAD > $@
+	git cat-file -p $(SHA1_FIRST_COMMIT) > $@
 
 tree-dag.tex:
-	git cat-file -p HEAD^{tree} > $@
+	git cat-file -p $(SHA1_FIRST_COMMIT)^{tree} > $@
 
 reflog.tex:
 	git reflog | head -n 10 > $@
