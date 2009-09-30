@@ -6,6 +6,7 @@ GENERATED_SRC += tree-dag.tex
 GENERATED_SRC += reflog.tex
 GENERATED_SRC += merge-conflict.tex
 GENERATED_SRC += hello-conflict.tex
+GENERATED_SRC += blame.tex
 SRC += guida-git.tex $(GENERATED_SRC)
 
 SHA1_FIRST_COMMIT=$(shell git log --reverse --pretty=%H | head -n 1)
@@ -49,6 +50,9 @@ merge-conflict.tex hello-conflict.tex:
 	git checkout merge-conflict
 	git merge fucking-merge-conflict > merge-conflict.tex \
 		|| cp hello.c hello-conflict.tex && git checkout -f master
+
+blame.tex:
+	git blame -L /VERBATIM\ STUFFS/,/END\ VERBATIM/  -s macro.tex > $@
 
 clean:
 	rm -vf $(GUIDA) *.pgf *.log $(GENERATED_SRC) hyplain*
