@@ -1,0 +1,15 @@
+\capitolo Attributes
+
+\`E possibile collegare un attributo particolare ad un path e modificare cos\`i
+il comportamento di \git; le impostazioni relativamente a questo sono da
+indicare nel file \code{.gitattributes} o \code{\$GIT\_DIR/info/attributes}.
+
+\iniziacode
+$ echo '*.doc diff=doc' >> .gitattributes
+$ git config diff.doc.textconv strings
+|finecode
+
+\iniziacode
+$ echo '*.png diff=exif' >> .gitattributes
+$ git config diff.exif.textconv exiftool
+|finecode
