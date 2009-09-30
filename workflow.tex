@@ -234,8 +234,8 @@ $ git checkout --track bob/i-love-programming
 Il lavorare su rami di sviluppo \`e molto interessante, ma siccome ci sono pi\`u
 branch ma un solo working tree, spesso ci si ritrova a dover passare velocemente
 da un ramo all'altro (magari per fissare un baco di sicurezza appena scoperto)
-ma aver il WT sporco; a questo punto ci si ritrova con due possibilità: o si fa
-un commit da amendare in seguito oppure si usa \code{git stash}.
+ma aver il WT sporco; a questo punto ci si ritrova con due possibilit\`a: o si
+fa un commit da amendare in seguito oppure si usa \code{git stash}.
 
 Uno stash tecnicamente \`e un commit il cui tree registra lo stato della working
 directory; il suo primo genitore \`e il commit dell'\url{HEAD} al momento della
@@ -255,6 +255,27 @@ comando a sua volta accetta vari sottocomandi
 Da notare che nel caso noi effettuassimo delle modifiche ad un branch
 sbagliato, sarebbe molto complicato passarle in quello giusto, ma come abbiamo
 visto con lo stash questo \`e immediato.
+
+\elemento\code{list}: Elenca gli stashes che si trovano nella coda.
+
+\elemento\code{show}: Mostra i cambiamenti registrati in uno stash.
+
+\elemento\code{save}: Crea un nuovo stash a partire dalla situazione attuale di
+WT e index e li pulisce per farli coincidere con HEAD a meno che l'opzione \code{--index} sia usata ed in tal caso lascia invariato lo stato dell'index.
+
+\elemento\code{branch}:
+
+\elemento\code{pop}: Rimuove un singolo stash
+(se non indicato come argomento usa l'ultimo) e lo applica eseguendo
+l'operazione inversa di \code{save}; il WT deve combaciare con l'index.
+Nel caso si usi l'opzione \code{--index} cerca di impostare anche i cambi dell'indice.
+
+\elemento\code{apply}: Come \code{pop} ma non
+rimuove lo stash dalla lista.
+
+\elemento\code{drop}:
+
+\elemento\code{clear}:
 
 Un'altra possibilit\`a \`e il trovarsi a controllare che un build di una
 applicazione avvenga in maniera pulita, avendo gi\`a inserito nell'indice i
