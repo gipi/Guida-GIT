@@ -2,6 +2,10 @@
 \beginpackages
   \usepackage{url}
 \endpackages
+%%%%%%%% SALVIAMO QUALCHE PARAMETRO COME È DI DEFAULT %%%%%%%%%%
+\newdimen\defaultparskip\defaultparskip=\parskip
+\newdimen\defaultparindent\defaultparindent=\parindent
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\enablehyperlinks[pdftex]
 %\hlopts{bwidth=0,colormodel=gray,color=.4}
 \font\capitolofont=cmssdc10 at 30pt
@@ -20,7 +24,9 @@
 	\smallskip\noindent
 }%
 \newcount\numeronota
+% eplain reference pg30
 \let\notapiepagina=\numberedfootnote
+\everyfootnote={\parindent=\defaultparindent}
 \def\elemento#1: #2\par{% from 'A plain Tex primer'
 	\smallskip
 	\bgroup
@@ -34,12 +40,15 @@
 \def\code #1{{\tt #1}}
 
 \def\iniziacode{%
+  \bgroup
+  \parskip=\defaultparskip
   \smallskip\noindent
   \smallskip\verbatim}
 
 \edef\finecode{
   \endverbatim
   \smallskip
+  \egroup
   \goodbreak\noindent}
 
 \def\includecode#1\par{%
