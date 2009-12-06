@@ -146,10 +146,55 @@ di un branch oppure con \tikz\node[tag]{tag}; quella relativa ad una tag.
 \endfiguratikz[Schema di un repository standard con due rami di sviluppo ed una
 tag ``v1.0'' che identifica (per esempio) una release stabile.]
 
-\sezione Implementazione
+\sezione Object database o repository
 
-L'implementazione iniziale su cui Linus Torvalds ha costruito questo strumento
-\`e stata ispirata dalla concezione ``alla filesystem''
+Le strutture dati che effettivamente immagazinano le informazioni descritte
+nella sezione precedente sono contenute nel cosidetto \evidenzia<database
+bject>; questo fa parte del design interno di \git\ descritto dai suoi autori
+nella seguente maniera
+
+{
+\bigskip
+\parindent=2cm\narrower\sl
+\noindent   git is a fast, content-addressable, decentralized and
+symmetrically ad hoc synchronizable, cryptographically
+ verified filesystem, stored as a directed acyclic graph of
+commits, trees, and blobs, with SHA-1 pointers as edges,
+ backed by a POSIX-compatible filesystem, with both a
+ simple storage format and a space- and seek-efficient,
+          compressed, delta chained pack format.
+\bigskip
+}
+
+Un punto fondamentale nel design di \git \`e che esso archivia solo i contenuti
+e non per esempio i metadati dei permessi nel filesystem sottostante; questi
+contenuti vengono salvati in cosidetti \evidenzia<oggetti> ed identificati
+attraverso lo \evidenzia<sha1> del loro contenuto, cio\'e un checksum
+rappresentato da un cifra esadecimale di 40 caratteri.
+Da notare che essendo questo
+algoritmo di genere crittografico abbastanza forte\notapiepagina{Esistono degli
+attacchi a questo algoritmo, ma vista la caratteristica di archiviare codice
+sorgente \`e plausibilmente impossibile creare un file con lo stesso
+\code{sha1} avente del codice malevolo voluto.} si aggiunge un layer di
+sicurezza in pi\`u all'integrità del repository.
+
+A livello fisico gli oggetti sono salvati nella directory \code{.git/objects/}
+usando delle sottodirectory con il nome composto dalle prime due cifre
+esadecimali e in file con il nome dato dalle altre 38 cifre rimanenti;
+per ridurre inoltre la dimensione di questo database \`e
+possibile immagazzinare i vari oggetti usando dei cosidetti \evidenzia<pack
+file> che ricostruiscono gli oggetti tramite le loro versioni deltificate. Essi
+sono contenuti nella directory \code{.git/objects/pack/} ed elencati dal file
+\code{.git/objects/info/packs}. 
+
+Per verificare attivamente l'integrit\`a del database sono presenti strumenti
+appositi quali \code{git fsck}: infatti a seconda della storia e del
+comportamento dell'utente \`e possibile che all'interno del database siano
+presenti oggetti non referenziati da nessuna delle referenze del repository e
+che quindi eventualmente verranno eliminati con appositi comandi. \`E possibile
+anche integrare/creare repository esterni a partire dagli oggetti del proprio
+database, ed \`e proprio questa funzionalit\`a che permette di avere uno
+sviluppo distribuito.
 
 \sezione git
 
