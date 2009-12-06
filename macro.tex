@@ -74,6 +74,17 @@
 	\hfil\vbox{\advance\hsize by-1cm\noindent #2}
 	\medskip
 }
+%%%%%%%%%%%%%% CODE SAMPLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\lonelypage#1\par#2\par{%
+	\pageinsert
+	\line{\hrulefill}%
+	\input #1 
+	\medskip
+	\centerline{#2}
+	\line{\hrulefill}
+	\vfill
+	\endinsert
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\iniziaelenco{
   \medskip
