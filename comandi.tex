@@ -29,6 +29,11 @@ remoto (nel primo caso il database degli oggetti pu\`o essere in comune).
 Questa copia viene creata in una nuova directory e crea dei branch locali per
 ogni branch remoto (visualizzabili tramite \code{git branch -r}).
 
+\elemento\code{commit}: Costruisce un nuovo commit a partire dal contenuto
+dell'indice ed aggiorna il branche attuale (e l'\code{HEAD}) in maniera da
+puntare a questo oggetto oltre ovviamente ad inserire questo nel database degli
+oggetti.
+
 \elemento \code{gc}: Comando che gestisce la pulizia e l'ordine del repository;
 si occupa di eliminare i file non pi\`u referenziati, crea un database degli
 oggetti immagazzinati attraverso la creazione dei file \code{.pack} che
@@ -76,8 +81,19 @@ digerisce \code{diff}.
 \elemento\code{send-mail}: Invia patch come email, molto comodo nel caso in cui
 il workflow comprenda la discussione dello sviluppo software via mail.
 
+\elemento\code{imap-send}: Invia una o pi\`u patches passate dallo stdin su una
+cartella \code{IMAP}.
+
 \elemento\code{bundle}: Genera, verifica o descrive un archivio comprendente
 oggetti e referenze di un repository.
+
+\sezione Comandi per gestire le referenze
+
+Fondamentale per una corretta funzionalit\`a di un sistema di versioning \`e
+poter gestire facilmente i vari rami (tip) di sviluppo
+
+\elemento\code{branch}: Comando general purpouse per la creazione, eliminazione
+e visualizzazione dei rami presenti nel repository.
 
 \sezione Comandi che danno informazioni
 
