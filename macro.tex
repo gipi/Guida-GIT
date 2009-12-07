@@ -74,6 +74,15 @@
 	\hfil\vbox{\advance\hsize by-1cm\noindent #2}
 	\medskip
 }
+% per le citazioni
+\def\citazione#1\par{
+	\bgroup
+	\bigskip
+	\parindent=2cm\narrower\sl
+	\noindent #1
+	\bigskip
+	\egroup
+}
 %%%%%%%%%%%%%% CODE SAMPLES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\lonelypage#1\par#2\par{%
 	\pageinsert
