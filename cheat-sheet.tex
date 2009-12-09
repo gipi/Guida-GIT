@@ -1,0 +1,14 @@
+\tikzpicture[node distance = 3cm, every node/.style={draw,top color=white, bottom color=red!50, shape=rounded rectangle},
+  command/.style={top color=white, bottom color=blue!50}]
+  \matrix[row sep=1mm, column sep=5mm] {
+    \node (wt) {WORKING TREE}; & & \node (idx) {INDEX}; & & \node (lrepo) {LOCAL REPO}; & & \node (rrepo) {REMOTE REPO};\\
+  };
+  \draw [<->, thick] ($  (wt.center) - (0, 10mm) $) -- ($ (rrepo.center) - (0,10mm) $)
+    node [command, midway] {\tt git clone};
+  \draw [<-] ($  (wt.center) - (0, 20mm) $) -- ($ (idx.center) - (0,20mm) $)
+    node [command, midway] {\tt git diff};
+  \draw [<->] ($  (wt.center) - (0, 30mm) $) -- ($ (lrepo.center) - (0,30mm) $)
+    node [command, midway] {\tt git diff HEAD};
+  \draw [<-] ($  (wt.center) - (0, 40mm) $) -- ($ (lrepo.center) - (0,40mm) $)
+    node [command, midway] {\tt git checkout};
+\endtikzpicture
