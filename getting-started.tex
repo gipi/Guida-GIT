@@ -209,7 +209,7 @@ alternativa esistono le variabili di ambiente \verbatim GIT_DIR |endverbatim e
 \verbatim GIT_WORK_TREE|endverbatim).
 
 Altre variabili d'ambiente utilizzate sono
-\unorderedlist
+\iniziaelenco
 \li\verbatim GIT_INDEX_FILE |endverbatim
 \li\verbatim GIT_OBJECT_DIRECTORY |endverbatim
 \li\verbatim GIT_ALTERNATE_OBJECT_DIRECTORIES |endverbatim
@@ -227,7 +227,7 @@ Altre variabili d'ambiente utilizzate sono
 \li\verbatim GIT_SSH |endverbatim
 \li\verbatim GIT_FLUSH |endverbatim
 \li\verbatim GIT_TRACE |endverbatim
-\endunorderedlist
+\fineelenco
 
 \sezione Revisioni
 
@@ -237,28 +237,28 @@ grammatica che permetta di identificare determinate revisioni (o parti di esse)
 tramite parametri temporali, di discendenza etc...
 Principalmente esistono le seguenti maniere per riferirsi a delle specifiche
 revisioni
-\unorderedlist
+\iniziaelenco
 \li Il nome dell'oggetto tramite il suo \code{SHA1} che identifica il contenuto
 dell'oggetto oppure una sua sottosequenza
 \li Una referenza simbolica contenuta che verr\`a cercata in questo ordine
 restituendo la prima trovata 
-\unorderedlist
+\iniziaelenco
 \li\verbatim $GITDIR/<name>|endverbatim
 \li\verbatim $GITDIR/refs/<name>|endverbatim
 \li\verbatim $GITDIR/refs/tags/<name>|endverbatim
 \li\verbatim $GITDIR/refs/heads/<name>|endverbatim
 \li\verbatim $GITDIR/refs/remote/<name>|endverbatim
 \li\verbatim $GITDIR/refs/remote/<name>/HEAD|endverbatim
-\endunorderedlist
+\fineelenco
 \noindent tenendo conto che esistono referenze che hanno significati particolari:
 \code{HEAD} rappresenta il commit su cui l'attuale working tree \`e basato
 (quindi ad ogni cambio di branch \`e lui ad essere cambiato assieme al working
 tree).
-\endunorderedlist
+\fineelenco
 \`E possibile anche specificare anche una referenza derivata tramite una
 notazione indiciale o temporale, la grammatica \`e la seguente:
 \smallskip
-\unorderedlist
+\iniziaelenco
 \li\verbatim <ref>@{DATE SPECIFICATION} |endverbatim
 \li\verbatim <ref>@{ORDINAL SPECIFICATION} |endverbatim
 \li\verbatim <rev>^ |endverbatim
@@ -268,7 +268,7 @@ notazione indiciale o temporale, la grammatica \`e la seguente:
 \li\verbatim :/<some text> |endverbatim
 \li\verbatim <ref>:<path> |endverbatim
 \li\verbatim :{0,1,2,3}:<path> |endverbatim
-\endunorderedlist
+\fineelenco
 \smallskip
 Esiste un particolare sottocomando di git per ottenere il nome della referenza
 effettivamente indicata attraverso uno dei metodi appena descritti: \code{git
