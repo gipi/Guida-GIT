@@ -20,8 +20,8 @@ all: $(GUIDA)
 %.ps: %.dvi
 	dvips $^ -o
 
-$(GUIDA): $(SRC) $(SRC_TEX) hyplain
-	pdftex -fmt hyplain -output-format pdf $<
+$(GUIDA): $(SRC) $(SRC_TEX)
+	pdftex -output-format pdf $<
 
 %.dvi: %.tex
 	tex $^
@@ -47,9 +47,11 @@ reflog.tex:
 	git reflog | head -n 10 > $@
 
 merge-conflict.tex hello-conflict.tex:
-	git checkout merge-conflict
+	git diff --exit-code > /dev/null
+	git diff --cached --exit-code > /dev/null
+	git checkout -f merge-conflict
 	git merge fucking-merge-conflict > merge-conflict.tex \
-		|| cp hello.c hello-conflict.tex && git checkout -f master
+		|| { cp hello.c hello-conflict.tex && git checkout -f master; }
 
 blame.tex:
 	git blame -L /VERBATIM\ STUFFS/,/END\ VERBATIM/  -s macro.tex > $@
