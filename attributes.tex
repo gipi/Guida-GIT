@@ -13,3 +13,10 @@ $ git config diff.doc.textconv strings
 $ echo '*.png diff=exif' >> .gitattributes
 $ git config diff.exif.textconv exiftool
 |finecode
+
+Esiste anche un modo per controllare quali attributi effettivamente siano
+applicati a cosa
+
+\iniziacode
+$ git check-attr
+|finecode

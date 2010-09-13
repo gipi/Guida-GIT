@@ -8,8 +8,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\enablehyperlinks[pdftex]
 %\hlopts{bwidth=0,colormodel=gray,color=.4}
+\font\defaultfn=cmr10
 \font\capitolofont=cmssdc10 at 30pt
 \font\sezionefont=cmssdc10 at 15pt
+\font\footnotefont=cmr10 at 7pt
 %	from tex-by-topic pg211
 \def\goodbreak{\par\penalty-500 } % encourage page break
 \def\capitolo#1\par{%
@@ -38,6 +40,7 @@
 }%
 %%%%%%%%%%%%%%% VERBATIM STUFFS %%%%%%%%%%%%%%%%%%
 \def\code #1{{\tt #1}}
+\def\cc #1 {{\tt #1}}
 
 \def\iniziacode{%
   \bgroup
@@ -66,7 +69,9 @@
 		\line{\hfil\epsfbox{#1}\hfil}
 	\endinsert\noindent
 }%
+% per le cose importanti
 \def\evidenzia<#1>{{\bf #1}}
+% per i link?
 \def\link#1: #2\par{%
 	\goodbreak
 	\noindent\url{#1}
@@ -98,6 +103,7 @@
 \def\iniziaelenco{
   \medskip
   \bgroup
+  \multiply \parindent by 3
   \unorderedlist
 }
 \def\fineelenco{
@@ -122,4 +128,15 @@ license is included in the section entitled gnu Public License.}
 \def\git{\code{git}}
 \def\HEAD{\code{HEAD}}
 \def\URL{\code{URL}}
+% TODO: \path
 \def\newpage{\vfil\eject}
+
+% TODO: creare ambiente ala minipage in cui si crea un qualcosa
+% staccato dal flow normale del documento che vada in una pagina a parte.
+\def\minipage#1\par{%
+  \pageinsert
+  \vbox{#1}
+  \vfill
+  \centerline{{\bf Fig:} figura interessante}
+  \endinsert
+}%

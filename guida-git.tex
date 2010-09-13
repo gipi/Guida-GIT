@@ -2,10 +2,12 @@
 \input tikz-macro
 %\IT
 \font\commitfn=cmtt10 at 5pt
+\defaultfn
+\parskip=5pt
 %\parfillskip 10pt plus 1fil
 \parindent=10pt
 % capitoli
-\line{\capitolofont GIT}
+\line{\capitolofont GIT the fucking manual\hfil}
 \vfil
 \licenza
 \eject
@@ -23,6 +25,18 @@
 \input the-git-directory
 
 \capitolo Miscellanea
+
+\sezione Splittare un commit
+
+\iniziacode
+$ git rebase -i <ref>^
+  qui si apre un editor, selezionare con "edit" il commit
+$ git reset HEAD^
+$ git add --patch
+$ git commit -m "primo pezzo"
+$ git commit -a -m "secondo pezzo"
+$ git rebase --continue
+|finecode
 
 \sezione Installazione non standard on the remote side
 
@@ -307,5 +321,50 @@ Riepilogo dei comandi \git \ e del loro agire
 \input cheat-sheet
 
 \input linkografia
+
+\minipage
+\figuratikz[every path/.style={line width=1pt},show background rectangle
+  ]
+  \node[commit] (0,0) (tip){c5};
+  \node[commit] [above right of=tip] (index){index};
+  \node[commit] [below right of=tip]  (wt){wt};
+  \node[commit] [left of=tip](c4) {c4};
+  \node[commit] [left of=c4](c3) {c3};
+  \node[commit] [left of=c3](c2) {c2};
+  \draw[->] (tip) -- (c4);
+  \draw[->] (c4) -- (c3);
+  \draw[->] (c3) -- (c2);
+  \node[head] at (tip.north west) (master) {master};
+  \node[HEAD] [above=of master](HEAD){HEAD};
+  \draw[<-] (master)--(HEAD);
+\endfiguratikz[bella]
+porcodio
+\figuratikz[every path/.style={line width=1pt},
+	show background rectangle
+  ]
+  \node[commit] (0,0) (tip){c5};
+  \node[wt] [below right of=tip]  (wt){wt};
+  \node[index] [left=of wt] (index){idx};
+  \node[commit] [left=of tip](c4) {c4};
+  \node[commit] [left of=c4](c3) {c3};
+  \node[commit] [left of=c3](c2) {c2};
+  \draw[->] (tip) -- (c4);
+  \draw[->] (c4) -- (c3);
+  \draw[->] (c3) -- (c2);
+  \node[head] at (tip.north west) (master) {master};
+  \node[HEAD] [above=of c4] (HEAD){HEAD};
+  \draw[<-] (c4)--(HEAD);
+\endfiguratikz[bella]
+
+\tikzpicture
+  \draw[help lines] (0,0) grid (3,2);
+  \draw
+    [preaction={fill=black,opacity=.5,
+                transform canvas={xshift=1mm,yshift=-1mm}}]
+    [fill=red] (0,0) rectangle (1,2)
+               (1,2) circle (5mm);
+\endtikzpicture
+
+
 
 \end

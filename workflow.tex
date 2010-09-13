@@ -65,6 +65,27 @@ comando
 $ git checkout -b topic
 |finecode
 
+\sezione Facciamo la storia
+
+Il programmare e/o lavorare ad un progetto implica la scrittura e la modifica
+effettiva di file o quant'altro che devono poi essere registrati nella storia
+del progetto stesso; come detto nel primo capitolo, \git\ fa uso del cosidetto
+indice che permette di ``prendere da parte'' dei cambiamenti per inserirli nella
+storia. Man mano che i cambiamenti effettuati soddisfano i requisiti minimi per 
+un cambiamento li si aggiunge all'indice in modo da aggiornare il tree contenuto
+nell'indice.
+
+Una volta che i cambiamenti sono idonei a rappresentare una unit\`a specifica di
+modifica si possono \evidenzia<committare>: questo andr\`a a creare dei nuovi
+oggetti nel database in base a quali blob e tree sono stati modificati rispetto
+al commit genitore; infine \HEAD\ e il branch corrente vengono aggiornati in
+maniera da puntare a questo nuovo commit.
+
+\iniziacode
+$ git add file.txt
+$ git commit -m 'descrizione del commit'
+|finecode
+
 \sezione Merging
 
 Ci sono delle occasioni in cui rebasare un branch rispetto ad un altro non \`e
@@ -95,7 +116,9 @@ Per trovare il risultato finale dall'antenato comune, si tiene in considerazione
 \li altrimenti si ha un conflitto
 \endorderedlist
 quanto detto sopra si applica ai cambiamenti relativi al contenuto dei file ma
-anche ai relativi path.
+anche ai relativi path. La nuova configurazione andr\`a a creare un nuovo
+commit avente due commit genitori come in questo schema
+\input merge-scheme-final
 
 A parte la scelta della strategia, alla fine possono esserci dei conflitti
 durante l'operazione che devono essere risolti manualmente (Linus docet).
@@ -119,6 +142,10 @@ $ git checkout MERGE_HEAD <conflicted file> # prende contenuto dal locale
 $ git reset -- <conflicted file>
 $ git checkout ORIG_HEAD <conflicted file> # prende contenuto dal locale
 |finecode
+
+Esiste anche la possibilit\`a di usare l'opzione \code{--squash} per ottenere un
+commit nel branch attuale con il contenuto del merge ma senza generare un vero e
+proprio merge (il commit risultante ha solo un genitore).
 
 \sezione Rebasing
 
@@ -207,6 +234,22 @@ che corrisponder\`a al seguente file
 
 \includecode hello-conflict
 
+\sezione Rerere
+
+``reuse recorded resolution'', \code{rerere.enabled}
+
+Partiamo da un caso semplice di esempio per capire come poterlo usare nei casi
+reali: abbiamo due branch con un solo file nel repository; si cerca di fare
+il merge di uno nell'altro ma ci sono dei conflitti che risolvo una volta ma
+ho l'accortezza di registrarli tramite \code{rerere}. Una volta risolto e
+committato resetto ad una situazione prima del merge, lo rieseguo ed uso
+\code{rerere} per ottenere il WT con la soluzione precedente:
+
+\lonelypage rerere
+
+{\bf Esempio 2:} esempio di come utilizzare rerere per memorizzare un conflitto
+risolto.
+
 \sezione Terzo collaboratore
 
 Succede che ci sia qualcun'altro che lavora ad uno stesso repo ma che ha
@@ -239,7 +282,8 @@ fa un commit da amendare in seguito oppure si usa \code{git stash}.
 
 Uno stash tecnicamente \`e un commit il cui tree registra lo stato della working
 directory; il suo primo genitore \`e il commit dell'\url{HEAD} al momento della
-sua creazione, il secondo registra invece l'indice al momento della creazione:
+sua creazione, il secondo registra invece l'indice al momento della creazione
+(cio\`e in pratica \`e un \code{merge commit}):
 nella figura seguente \`e mostrato visivamente quanto affermato
 \input stash-tree
 dove
@@ -256,12 +300,15 @@ Da notare che nel caso noi effettuassimo delle modifiche ad un branch
 sbagliato, sarebbe molto complicato passarle in quello giusto, ma come abbiamo
 visto con lo stash questo \`e immediato.
 
-\elemento\code{list}: Elenca gli stashes che si trovano nella coda.
+\elemento\code{list}: Elenca gli stashes che si trovano nella coda (\`e
+implementato tramite \code{git log -g refs/stash}).
 
 \elemento\code{show}: Mostra i cambiamenti registrati in uno stash.
 
 \elemento\code{save}: Crea un nuovo stash a partire dalla situazione attuale di
 WT e index e li pulisce per farli coincidere con HEAD a meno che l'opzione \code{--index} sia usata ed in tal caso lascia invariato lo stato dell'index.
+Aggiunta recentemente l'opzione \code{--patch} che permette di creare stashes
+di porzioni di codice.
 
 \elemento\code{branch}:
 
@@ -277,13 +324,20 @@ rimuove lo stash dalla lista.
 
 \elemento\code{clear}:
 
+\elemento\code{create}: Genera uno stash e restituisce il suo sha1 senza
+tuttavia referenziarlo nel ref namespace.
+
 Un'altra possibilit\`a \`e il trovarsi a controllare che un build di una
 applicazione avvenga in maniera pulita, avendo gi\`a inserito nell'indice i
 cambiamenti per il prossimo commit: \code{git stash save --keep-index} salva
 come descritto precedentemente, ma lasciando per l'appunto l'indice intatto. A
 questo punto per esempio un \code{make} e qualche test sull'applicazione potr\`a
 farci sincerare se effettivamente abbiamo messo tutto il necessario per il
-prossimo commit.
+prossimo commit. Poi in realt\`a ci sarebbero anche i file ``untracked'' che
+andrebbero eliminati per evitare falsi positivi (tipo file che dovrebbero essere
+nell'indice ma non lo sono); \code{stash} pu\`o aiutare anche per questo: dopo
+avere stashato i contenuti tracked, aggiungete all'indice quelli untracked e
+stashate quelli.
 
 \sezione Scova il baco
 
@@ -291,48 +345,8 @@ In alcuni casi ci ritroviamo con del codice avente dei problemi di vario tipo e
 per un qualche motivo (magari proprio perch\'e il codice \`e nostro, oppure
 perch\'e quel baco ci sta fottendo il filesystem) siamo noi a dovercene occupare
 e anche in questo git ci d\`a una mano non indifferente.
-\figuratikz[show background rectangle]
-	\path (0:0cm)    node (v0) {};
-	\node (v1) [right=of v0];
-	\node (v2) [right=of v1];
-	\node (v3) [right=of v2];
-	\node (v4) [right=of v3];
-	\node (v5) [right=of v4];
-	\node (v6) [right=of v5];
-	\node (v7) [right=of v6];
-	\node (v8) [right=of v7];
-	\node (w1) [below right=of v1];
-	\node (w2) [right=of w1];
-	\node (w3) [right=of w2];
-	\node (z1) [above right=of v2];
-	\node (z2) [right=of z1];
-	\node (z3) [right=of z2];
-	\node (z4) [right=of z3];
-	\draw [->] (v0) -- (v1);
-	\draw [->] (v1) -- (v2);
-	\draw [->] (v2) -- (v3);
-	\draw [->] (v3) -- (v4);
-	\draw [->] (v4) -- (v5);
-	\draw [->] (v5) -- (v6);
-	\draw [->] (v6) -- (v7);
-	\draw [->] (v7) -- (v8);
-	\draw [->] (v1) -- (w1);
-	\draw [->] (w1) -- (w2);
-	\draw [->] (w2) -- (w3);
-	\draw [->] (w3) -- (v5);
-	\draw [->] (v2) -- (z1);
-	\draw [->] (z1) -- (z2);
-	\draw [->] (z2) -- (z3);
-	\draw [->] (z3) -- (z4);
-	\draw [->] (z4) -- (v7);
-% grazie ad "anchor=" posso impostare che la punta della freccia sia
-% il punto rispetto a cui la disegna
-	\node (GOOD) at (v0.north west)
-    [anchor=tip,scale=.4,fill=white!80,single arrow,rotate=315,draw] {GOOD};
-	\node (BAD) at (v8.north west)
-    [anchor=tip,scale=.5,fill=black!80,single arrow,rotate=315,draw] {BAD};
-\endfiguratikz[Schema di un repository dove sappiamo che il commit da cui parte
-\`e uno ``buono'', mentre quello finale \`e ``cattivo'']
+
+\input bisect-scheme.tex
 
 Questo comando \`e molto versatile, anche perch\`e possiede un certo numero di
 sottocomandi che permettono una scelta mirata delle operazioni da compiere:
@@ -397,3 +411,5 @@ indicato in quale circostanza \`e avvenuto il cambiamento (commit, rebasing,
 merging, amending). Una volta trovata la referenza che recupera quanto perso, si
 pu\`o eseguire un \code{git checkout -b NOMEBRANCH REF} per avere un branch con
 le caratteristiche utili.
+
+Ricordarsi che la prima colonna indica lo sha1 del risultato del processo.

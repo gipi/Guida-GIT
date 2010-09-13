@@ -1,15 +1,14 @@
 \figuranofloattikz[background rectangle/.style=
 	{draw=blue!50,fill=blue!20,rounded corners=1ex},
-  tag/.style={anchor=tip,single arrow, fill=yellow!50,rotate=315,draw},
 	show background rectangle]
-	\tikzstyle{every node}=[minimum size=.5cm, draw,fill=green,shape=circle,distance=5mm,scale=.6];
+	%\tikzstyle{every node}=[minimum size=.5cm, draw,fill=green,shape=circle,distance=5mm,scale=.6];
 	\path (0:0cm)    node (v0);
-	\node (v1) [right=of v0];
+	\node[commit] (v1) [right=of v0];
 	\node (v2) [right=of v1] {I};
 	\node (v3) [above right=of v2] {W};
 	\draw [->] (v0) -- (v1);
 	\draw [->] (v1) -- (v2);
 	\draw [->] (v1) to [bend left] (v3);
 	\draw [->] (v2) -- (v3);
-  \node[tag] at (v1.north west) {HEAD}
+	\node[tag] at (v1.north west) {HEAD}
 \finefiguranofloattikz

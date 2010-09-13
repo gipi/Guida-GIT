@@ -1,19 +1,13 @@
 \figuranofloattikz[show background rectangle]
-	\path (0:0cm)    node (v0) {D};
-	\node (v1) [right=of v0] {E};
-	\node (v2) [right=of v1] {F};
-	\node (v3) [right=of v2] {G};
-	\node (w1) [below right=of v1] {A};
-	\node (w2) [right=of w1] {B};
-	\node (w3) [right=of w2] {C};
-	\draw [->] (v0) -- (v1);
-	\draw [->] (v1) -- (v2);
-	\draw [->] (v2) -- (v3);
-	\draw [->] (v1) -- (w1);
-	\draw [->] (w1) -- (w2);
-	\draw [->] (w2) -- (w3);
-% grazie ad "anchor=" posso impostare che la punta della freccia sia
-% il punto rispetto a cui la disegna
-	\node[head] (master) at (v3.north) {master};
-	\node[head] (topic) at (w3.north) {topic};
+	\rootCommit A;
+	\commit A <- B;
+	\commit B <- C;
+	\commit C <- D;
+	\commit D <- E;
+	\commit E <- H;
+	\branchref master -> H;
+	% branch inferiore
+	\downCommit D <- F;
+	\commit F <- G;
+	\branchref topic -> G;
 \finefiguranofloattikz

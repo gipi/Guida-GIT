@@ -8,6 +8,30 @@ in cui lo sviluppo avviene in maniera distribuita senza un repository centrale e
 senza la necessit\`a di collegarsi tramite rete ad esso\notapiepagina{Vedere
 \url{http://people.ubuntu.com/~ianc/papers/dvcs-why-and-how.pdf}}
 
+\sezione Storia
+
+La storia di \git\ inizia come molti altri software, inizia proprio dalla
+necessit\`a di alcuni di avere uno strumento adatto ai loro scopi ed in questo
+caso, di avere uno strumento per la gestione i sorgenti del kernel linux; in
+realt\`a la storia \`e leggermente pi\`u complicata in quanto gli sviluppatori
+usavano gi\`a un software chiamato \cc bitkeeper \ che a causa di un episodio di
+reverse engineering (tramite \cc telnet \notapiepagina{Vedi
+\url{http://lwn.net/Articles/132938/}}) decise di poter essere usato solamente
+tramite una licenza a cui molti sviluppatori (in primis Linus stesso)
+non potevano accedere.
+
+Quindi la saga ha inizio nel 2005 con pochi criteri implementativi
+
+\iniziaelenco
+\li \cc CVS \ come un esempio di cosa non fare.
+\li essere distribuito.
+\li essere al sicuro da corruzione anche malevola.
+\li avere delle performance ottime.
+\fineelenco
+
+\citazione ``I'm an egotistical bastard, and I name all my projects after
+myself. First Linux, now git.''
+
 \sezione Glossario
 
 Spesse volte la potenza di uno strumento si scontra con un certo numero di
@@ -95,18 +119,32 @@ merda la pagina) il cui contenuto sono il codice sorgente di questo testo (ai
 suoi albori) e il suo Makefile.
 
 Graficamente questo pu\`o essere tramite uno schema del seguente tipo
-\figuratikz
-\path (0:0cm) node[minimum size=1cm, fill=red!50,rounded rectangle=1cm, line width=3pt] (commit) {commit};
-\path node[below right=of commit,fill=green!50,rounded rectangle] (author) {author};
-\path node[below=of author,fill=green!50,rounded rectangle] (committer) {committer};
-\path node[below=of committer,fill=green!50,rounded rectangle] (tree) {tree};
-\path node[below right=of tree,fill=blue!50,rounded rectangle] (blob1) {blob1};
-\path node[below=of blob1,fill=blue!50,rounded rectangle] (blob2) {blob2};
-	\draw[->] (commit) |- (tree);
-	\draw[->] (commit) |- (author);
-	\draw[->] (commit) |- (committer);
-	\draw[->] (tree)   |- (blob1);
-  \draw[->] (tree)   |- (blob2);
+% commit = ovale
+% tree   = circonferenza
+% blob   = rettangolo con bordi arrotondati
+\figuratikz[
+	% without 'draw' non mi stroka
+	every node/.style={draw, line width=2pt, minimum size=1cm, font=\yeahdummuy},
+	every path/.style={line width=1pt},
+	tree/.style={fill=green!50,circle},
+	blob/.style={fill=blue!50,circle, rounded rectangle},
+]
+\path (0:0cm) node[commit] (commit) {commit};
+\path node[below left=of commit,fill=green!50,rectangle, line width=1pt] (author) {author};
+\path node[left=of author,fill=green!50,rectangle] (committer) {committer};
+\path node[tree, below=of commit] (tree1){tree1};
+\path node[tree, right=of tree1] (tree2) {tree2};
+
+\path node[blob, below right=of tree1] (blob1) {blob1};
+\path node[blob, left=of blob1] (blob2) {blob2};
+\path node[blob, right=of blob1] (blob3) {blob3};
+	\draw[->] (commit) -> (tree1);
+	\draw[->] (commit) -> (tree2);
+	\draw[->] (commit) -> (author);
+	\draw[->] (commit) -> (committer);
+	\draw[->] (tree1)   -> (blob1);
+	\draw[->] (tree1)   -> (blob2);
+	\draw[->] (tree2)   -> (blob3);
 \endfiguratikz[Rappresentazione del grafo di un commit]
 
 Personalmente trovo molto utile dare una rappresentazione delle
@@ -191,6 +229,23 @@ anche integrare/creare repository esterni a partire dagli oggetti del proprio
 database, ed \`e proprio questa funzionalit\`a che permette di avere uno
 sviluppo distribuito.
 
+\sezione Indice
+
+``Rivoluzionario'' da parte di git \`e l'uso del cosidetto indice. Al contrario
+di strumenti di versioning quali \code{SVN} che registrano le nuove revisioni
+utilizzando direttamente il working tree, \code{git} utilizza uno spazio a parte
+dove vengono immagazzinati i cambiamenti che porteranno alla nuova revisione.
+
+As much as you try to keep your new modifications related to a single feature or logical chunk, you sometimes get sidetracked and start hacking on something totally unrelated. Only half-way into this do you realize that your working directory now contains what should really be separated as two discrete snapshots.
+
+To help you with this annoying situation, the concept of a staging directory is useful. This area acts as an intermediate step between your working directory and a final snapshot. Each time you finish a snapshot, you also copy that to a staging directory. Now, every time you finish an edit to a new file, create a new file, or remove a file, you can decide whether that change should be part of your next snapshot. If it belongs, you mimic the change inside staging. If it doesn’t, you can leave it in working and make it part of a later snapshot. From now on, snapshots are created directly from the staging directory.
+
+This separation of coding and preparing the stage makes it easy to specify what is and is not included in the next snapshot. You no longer have to worry too much about making an accidental, unrelated change in your working directory.
+
+You have to be a bit careful, though. Consider a file named README. You make an edit to this file and then mimic that in staging. You go on about your business, editing other files. After a bit, you make another change to README. Now you have made two changes to that file, but only one is in the staging area! Were you to create a snapshot now, your second change would be absent.
+
+The lesson is this: every new edit must be added to the staging area if it is to be part of the next snapshot.
+
 \sezione git
 
 Il cuore di tutto \`e il comando \code{git} che rappresenta il cancello di
@@ -228,6 +283,13 @@ Altre variabili d'ambiente utilizzate sono
 \li\verbatim GIT_FLUSH |endverbatim
 \li\verbatim GIT_TRACE |endverbatim
 \fineelenco
+La cosa interessante \`e che in caso si defininisca uno script personale
+(vedi \code{git subtree}) che sia da usare come sottocomando di git, basta
+chiamarlo \code{git-whatever} e porlo nel proprio \code{PATH} per poi poterlo
+evocare tramite \code{git whatever}.
+
+Esistono delle facility per usare \git negli script: vedi \code{git sh-setup}
+grazie a cui vengono definite delle funzioni general purpouse.
 
 \sezione Revisioni
 
@@ -267,7 +329,9 @@ notazione indiciale o temporale, la grammatica \`e la seguente:
 \li\verbatim <ref>^{} |endverbatim
 \li\verbatim :/<some text> |endverbatim
 \li\verbatim <ref>:<path> |endverbatim
-\li\verbatim :{0,1,2,3}:<path> |endverbatim
+\li\verbatim :{0,1,2,3}:<path> |endverbatim indica un blob contenuto nell'indice
+(0 indica l'indice, 1 l'antenato comune, 2 versione del branch corrente e 3
+quello del branch remoto).
 \fineelenco
 \smallskip
 Esiste un particolare sottocomando di git per ottenere il nome della referenza
@@ -288,8 +352,7 @@ Per usare parole dello stesso Torvalds
 \noindent\line{%
 source: \url{http://article.gmane.org/gmane.comp.version-control.git/80592}%
 \hfil}
-\smallskip
-\verbatim
+\iniziacode
  - "a..b" is a plain difference. Think of it as a subtraction. For "diff", 
    it is simply the diff between a and b, and for log it is the "set 
    difference" (shown as either just "-" or as "\" in set theory math) 
@@ -300,8 +363,7 @@ source: \url{http://article.gmane.org/gmane.comp.version-control.git/80592}%
    a greek capital "Delta" in set theory math). And for "diff", it's no 
    longer just the diff between two states, it's the diff from a third 
    state (the nearest common state) to the second state.
-|endverbatim
-\smallskip
+|finecode
 Per indicare i genitori di un dato commit esistono due ulteriori abbreviazioni:
 \verbatim r1^@ |endverbatim indica tutti i genitori di \code{r1}, mentre
 \verbatim r1^! |endverbatim include
@@ -351,6 +413,7 @@ si indicher\`a con \code{vx.x.x.x} una versione che si intende installare)
 $ git fetch
 $ git tag
 $ git checkout -f vx.x.x.x
+$ make configure # potrebbe essere evitato ma evita errori particolari
 $ ./configure --prefix=/opt/git-vx.x.x.x
 $ make
 $ make install

@@ -67,9 +67,64 @@ Date:   Thu Feb 26 19:30:55 2009 +0100
 \egroup
 }
 % imposto alcune tipologie di nodi
-\tikzset{every node/.style={draw,fill=green,shape=circle,distance=5mm}}
-\tikzset{commit/.style={shape=rectangle, rounded corners=1ex, font=\commitfn, text width=5cm}}
+%
+% tutti i nodi relativi a commit/tree/blob devono avere
+% \font bold
+% line width 1pt
+\font\yeahdummuy=cmssbx10 at 7pt
+%\tikzset{every node/.style={draw,fill=green,shape=circle,distance=5mm}}
+\tikzset{commit/.style={shape=rounded rectangle, draw, fill=green, font=\yeahdummuy}}
+\tikzset{logcommit/.style={shape=rectangle, rounded corners=1ex, font=\commitfn, text width=5cm}}
 \tikzset{background rectangle/.style={draw=blue!50,fill=blue!20,rounded corners=1ex}}
-\tikzset{tag/.style={anchor=tip,single arrow, scale=.5,fill=yellow!50,rotate=315,draw}}
-\tikzset{head/.style={anchor=tip,single arrow, scale=.5,fill=red!50,rotate=315,draw}}
+\tikzset{tag/.style={anchor=tip, single arrow, scale=.5,fill=yellow!50,rotate=315,draw}}
+\tikzset{head/.style={anchor=tip, single arrow,
+scale=.7,fill=red!50,shape border rotate=270,draw, outer sep=3pt, font=\yeahdummuy}}
+\tikzset{HEAD/.style={head,fill=white}}
+\tikzset{index/.style={rounded rectangle, fill=blue!20!red, font=\yeahdummuy}}
+\tikzset{wt/.style={rounded rectangle, fill=blue!20!green, font=\yeahdummuy}}
+% qualche variabile utile %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% questa definisce se scrivere o meno il nodo dentro il commit
+\newif\ifNodeName
+\NodeNametrue
+\newtoks\nodeName
+% #testo #nodo
+\def\rootCommit #1;{
+  \nodeName{\ifNodeName#1\else{}\fi}
+  \path (0:0cm) node[commit] (#1) {\the\nodeName};
+}
+\def\metaCommit #1 <- #2 [#3];{
+  \nodeName{\ifNodeName#2\else{}\fi}
+  \node[commit] (#2) [#3=of #1] {\the\nodeName};
+  \draw [<-] (#1) -- (#2);
+}
+% controintuitivo: #vecchio nodo <- #nuovo nodo
+\def\commit #1 <- #2;{
+  \metaCommit #1 <- #2 [right];
+}
+% controintuitivo: #vecchio nodo <- #nuovo nodo
+\def\upCommit #1 <- #2;{
+  \metaCommit #1 <- #2 [above right];
+}
+% controintuitivo: #vecchio nodo <- #nuovo nodo
+\def\downCommit #1 <- #2;{
+  \metaCommit #1 <- #2 [below right];
+}
+\def\mergeCommit #1 - #2 <- #3;{
+  \node[commit] (#3) [right=of #1] {#3};
+  \draw [<-] (#1) -- (#3);
+  \draw [<-] (#2) -- (#3);
+}
+% crea un commit sotto il #1 e si suppone che #2 sia sotto-sotto
+\def\mergeCommitInTheMiddle #1 - #2 <- #3;{
+  \node[commit] (#3) [below right=of #1] {#3};
+  \draw [<-] (#1) -- (#3);
+  \draw [<-] (#2) -- (#3);
+}
+% #testo #nodo a cui puntare
+\def\branchref #1 -> #2;{
+  \node[head] (#1) at (#2.north) {#1};
+}
+\def\HEADref -> #1;{
+  \node[HEAD] (HEAD) at (#1.north) {HEAD};
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

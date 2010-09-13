@@ -8,6 +8,15 @@ sorgenti, quali file sono stati modificati e quando etc...
 All'interno di \code{git} esistono famiglie di comandi che sono stati pensati a
 questo scopo e molto malleabili da questo punto di vista.
 
+\sezione Show
+
+Forse quello meno utile lo descrivo subito in maniera da 
+
+\iniziacode
+$ git show --pretty=raw 52c660
+
+|finecode
+
 \sezione Log
 
 Il pi\`u alla mano \`e sicuramente \code{git log} che visualizza a partire da
@@ -37,6 +46,22 @@ $ git log --pretty=oneline --stat \| \\
    sed -n 's/^ \([0-9]*\) files changed, \([0-9]\) insertions(+), \([0-9]\) deletions(-)/\1 \2 \3/p'
 |finecode
 
+\sezione Cercare
+
+Nel mondo della linea di comando \code{UNIX} \`e nota la potenza di strumenti
+quali \code{grep}, \code{sed} oppure \code{awk} che permettono di lavorare su
+stream orientato a linee di testo per cercare/elaborare; \code{git} utilizza
+questa stessa filosofia e mette a disposizione un comando che riprende il nome e
+le funzionalit\`a di uno di questi: \code{git grep}.
+
+Questo comando ricerca una data stringa in tutto quello che pu\`o riguardare un
+progetto mantenuto tramite \code{git}: working tree, indice o dei tree passati
+come argomento.
+
+\iniziacode
+git grep -e ';;' --and --not -e 'for *(.*;;' -- '*.c'
+|finecode
+
 \sezione Differenze
 
 Quello che effettivamente noi registriamo con il nostro repository \`e
@@ -63,3 +88,10 @@ visualizzare autori e timestamp (altrimenti non sta negli 80 caratteri
 di un terminale).
 
 \listing{blame}
+
+\sezione Referenze
+
+\iniziacode
+$ git for-each-ref [--count=<count>] [--shell||--perl||--python||--tcl]
+                          [--sort=<key>]\* [--format=<format>] [<pattern>...]
+|finecode

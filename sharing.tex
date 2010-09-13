@@ -150,6 +150,17 @@ di configurazione
 
 impostando come valore in \code{sendemail.server}, oppure
 \code{--smtp-server}, il path alla sua installazione.
+
+Un'altra possibilit\`a \`e usare il comando \code{imap-send} che invia patches
+passate tramite stdin ad una cartella \code{IMAP}
+
+\iniziacode
+[imap]
+        folder = "INBOX.Drafts"
+        host = imaps://awesome.dominio.org
+        user = mario.rossi@awesome.dominio.org
+|finecode
+
 \sezione Gitosis
 
 \code{Gitosis} \`e un layer di amministrazione di accesso ai repository tramite
@@ -187,8 +198,8 @@ configurazione per l'accesso:
 $ git clone git@your.domain:gitosis-admin.git
 $ cd gitosis-admin
 $ ls -l
--rw-r--r-- 1 packz packz  303 23 apr 09:46 gitosis.conf
-drwxr-xr-x 2 packz packz 4096 23 apr 09:46 keydir
+-rw-r--r-- 1 user user  303 23 apr 09:46 gitosis.conf
+drwxr-xr-x 2 user user 4096 23 apr 09:46 keydir
 |finecode
 (notare come il percorso \url{repositories/} non venga incluso, rendendo
 trasparente l'accesso).
