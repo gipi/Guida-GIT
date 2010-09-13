@@ -9,7 +9,7 @@ GENERATED_SRC += hello-conflict.tex
 GENERATED_SRC += blame.tex
 SRC += guida-git.tex $(GENERATED_SRC)
 
-SHA1_FIRST_COMMIT=$(shell git log --reverse --pretty=%H | head -n 1)
+SHA1_FIRST_COMMIT=$(shell git log --reverse --pretty=%H master | head -n 1)
 
 FRASE="(La versione installata da chi ha compilato questo documento \`e "
 
