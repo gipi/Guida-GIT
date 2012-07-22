@@ -1,0 +1,40 @@
+\iniziacode
+$ echo 'primo' > file.txt
+$ git add file.txt
+$ git commit -m 'import iniziale'
+[master (root-commit) 813290d] import iniziale
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ create mode 100644 file.txt
+$ git checkout -b for-the-lulz
+Switched to a new branch 'for-the-lulz'
+$ echo for the lulz >> file.txt
+$ git commit -a
+[for-the-lulz 706fada] for the lulz.
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+ git checkout master
+Switched to branch 'master'
+$ echo siamo nel master >> file.txt
+$ git commit -a
+[master 519cf1b] Il master è sempre il master.
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+$ git diff for-the-lulz..
+diff --git a/file.txt b/file.txt
+index b8505e8..e72ff69 100644
+--- a/file.txt
++++ b/file.txt
+@@ -1,2 +1,2 @@
+ primo
+-for the lulz
++siamo nel master
+$ git diff for-the-lulz...
+diff --git a/file.txt b/file.txt
+index 9ef3b7f..e72ff69 100644
+--- a/file.txt
++++ b/file.txt
+@@ -1 +1,2 @@
+ primo
++siamo nel master
+$ git log --oneline  --abbrev-commit for-the-lulz...
+519cf1b Il master è sempre il master.
+706fada for the lulz.
+|finecode
