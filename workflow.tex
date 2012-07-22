@@ -250,6 +250,23 @@ committato resetto ad una situazione prima del merge, lo rieseguo ed uso
 {\bf Esempio 2:} esempio di come utilizzare rerere per memorizzare un conflitto
 risolto.
 
+In caso il salvataggio di \code{rerere} non sia corretto per un merge
+successivo, il buon Hamano nel seguente thread http://permalink.gmane.org/gmane.comp.version-control.git/192926
+ha esplicitato il seguente schema
+
+\iniziacode
+$ git merge other-branch
+... rerere kicks in; eyeball the results
+... ah, my earlier resolution is no longer correct
+$ edit $the_path
+... test the result of manual edit in the context of the merged whole
+... and be satisified
+$ git rerere forget $the_path
+$ git add $the_path
+$ git commit
+... rerere records the updated resolution
+|finecode
+
 \sezione Terzo collaboratore
 
 Succede che ci sia qualcun'altro che lavora ad uno stesso repo ma che ha
