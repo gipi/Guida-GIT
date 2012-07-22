@@ -1,0 +1,25 @@
+\figuratikz[show background rectangle]
+	\NodeNamefalse
+	\rootCommit A;
+	\commit A <- B;
+	\commit B <- C;
+	\commit C <- D;
+	\commit D <- E;
+	\commit E <- F;
+	\commit F <- G;
+	\commit G <- H;
+	% branch superiore
+	\upCommit B <- I;
+	\commit I <- L;
+	\commit L <- M;
+	\draw [<-] (M) -- (F);
+	% branch inferiore
+	\downCommit C <- O;
+	\commit O <- P;
+	\commit P <- Q;
+	\draw [<-] (G) -- (Q);
+	\NodeNametrue
+	\branchref good -> A;
+	\branchref bad -> H;
+\endfiguratikz[Schema di un repository dove sappiamo che il commit da cui parte
+\`e uno ``buono'', mentre quello finale \`e ``cattivo'']
