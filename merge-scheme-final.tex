@@ -1,0 +1,15 @@
+\figuranofloattikz[show background rectangle]
+	\rootCommit A;
+	\commit A <- B;
+	\commit B <- C;
+	\commit C <- O;
+  % upper branch
+	\upCommit O <- E;
+	\commit E <- F;
+	\commit F <- G;
+  % lower branch
+	\downCommit O <- H;
+	\commit H <- I;
+	% new merge commit
+	\mergeCommitInTheMiddle G - I <- L;
+\finefiguranofloattikz
