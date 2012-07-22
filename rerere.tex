@@ -1,0 +1,20 @@
+\iniziacode
+"master" branch $ git config rerere.enabled true
+"master" branch $ git merge topic
+Auto-merging file.txt
+CONFLICT (content): Merge conflict in file.txt
+Automatic merge failed; fix conflicts and then commit the result.
+"master*+||MERGING" branch $ git rerere
+"master*+||MERGING" branch $ vim file.txt # qui risolvi i conflitti
+"master*+||MERGING" branch $ git rerere
+Recorded resolution for 'file.txt'.
+"master*+||MERGING" branch $ git commit -a
+[master 1cb7f5a] Merge branch 'topic'
+"master" branch $ git reset --hard HEAD^
+HEAD is now at d970a42 Terza linea.
+"master" branch $ git merge topic
+Auto-merging file.txt
+CONFLICT (content): Merge conflict in file.txt
+Automatic merge failed; fix conflicts and then commit the result.
+"master*+||MERGING" branch $ git rerere
+|finecode
