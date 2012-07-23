@@ -51,11 +51,11 @@
 %
 %  http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2008-01/msg00376.html
 
-{\catcode`'=\active
+{\makeactive'
 \gdef\iniziacode{%
   \bgroup%
-\catcode`'=\active%
-\def'{\char13 }%
+\makeactive'%
+\chardef'=13%
   \parskip=\defaultparskip%
   \smallskip\noindent%
   \smallskip\verbatim}%
@@ -72,10 +72,21 @@
   \goodbreak\noindent}
 
 \def\includecode#1\par{%
-\medskip
-\listing{#1}
-\medskip
-\noindent
+  \medskip
+  \begingroup
+  \listing{#1}
+  \endgroup
+  \medskip
+  \noindent
+}
+
+% It's little tricky: since we can't modify reliably the \listing macro
+% we modify the \listingfont so to activate "'" and "`"
+{\makeactive'
+\gdef\listingfont{\makeactive'\chardef'=13\tt}
+}
+{\makeactive`
+\xdef\listingfont{\unexpanded\expandafter{\listingfont}\chardef\noexpand`=18 }
 }
 %%%%%%%%%%%%%% END VERBATIM STUFFS %%%%%%%%%%%%%%%%%%
 
