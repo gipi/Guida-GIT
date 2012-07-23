@@ -41,12 +41,29 @@
 %%%%%%%%%%%%%%% VERBATIM STUFFS %%%%%%%%%%%%%%%%%%
 \def\code #1{{\tt #1}}
 \def\cc #1 {{\tt #1}}
+% In order to make the verbatim text copy&pastable
+% we have to map the "'" char to the "0D how explained
+% in the following link
+%
+%  http://www.cl.cam.ac.uk/~mgk25/ucs/quotes.html
+%
+% also is useful the discussione on comp.text.tex
+%
+%  http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2008-01/msg00376.html
 
-\def\iniziacode{%
-  \bgroup
-  \parskip=\defaultparskip
-  \smallskip\noindent
-  \smallskip\verbatim}
+{\catcode`'=\active
+\gdef\iniziacode{%
+  \bgroup%
+\catcode`'=\active%
+\def'{\char13 }%
+  \parskip=\defaultparskip%
+  \smallskip\noindent%
+  \smallskip\verbatim}%
+}
+% http://tex.stackexchange.com/questions/63353/how-to-properly-display-backticks-in-verbatim-environment
+{\catcode`\`=13
+\xdef\verbatim{\unexpanded\expandafter{\verbatim}\chardef\noexpand`=18 }
+}
 
 \edef\finecode{
   \endverbatim
