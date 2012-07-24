@@ -161,48 +161,60 @@ passate tramite stdin ad una cartella \code{IMAP}
         user = mario.rossi@awesome.dominio.org
 |finecode
 
-\sezione Gitosis
+Da parte di chi riceve le patch \'e possibile utilizzare invece il comando
+\code{git am} per applicarle al proprio repository.
 
-\code{Gitosis} \`e un layer di amministrazione di accesso ai repository tramite
-un unico account accessibile tramite \code{ssh}
+\sezione Gitolite
 
+\code{Gitolite} \`e un layer di amministrazione di accesso ai repository tramite
+un unico account accessibile da \code{ssh}; il repository del codice sorgente
+si trova su \url{http://github.com} al seguente indirizzo.
 \iniziacode
-$ git clone git://eagain.net/gitosis.git
-$ cd gitosis
-$ python setup.py install [ --prefix=/path/to/ ]
+$ git clone git://github.com/sitaramc/gitolite.git
 |finecode
-Poi si ``installa'' la chiave ssh da usare come amministratore\notapiepagina{Qui
-ci pu\`o essere qualche questione dei permessi o dell'utente a cui devono essere
-assegnati i repository.}
+Ancora su \url{http://github.com} si trova la documentazione, pi\`u precisamente
+all'indirizzo
+\medskip
+\centerline{\url{http://sitaramc.github.com/gitolite/master-toc.html}}
+\medskip
+Per l'installazione \`e consigliato creare un utente apposito nel sistema con
+meno privilegi possibili. Per eseguire l'installazione vera e propria
+eseguire il comando
 \iniziacode
-$ gitosis-init < id_rsa.pub
-Initialized empty Git repository in ./
-Initialized empty Git repository in ./
+# adduser gitolite --disabled-password --home /var/gitolite
+# su - gitolite
+$ git clone git://github.com/sitaramc/gitolite.git
+$ mkdir bin
+$ gitolite/install -to ~/bin
+$ gitolite setup -pk YourName.pub # YourName.pub è la propria chiave pubblica
 |finecode
-Siccome \code{gitosis} si basa in maniera massiccia sull'hook \code{post-update}
-\`e necessario renderlo eseguibile\notapiepagina{Nel caso in cui si abbiano
-installate librerie e binari in posti inusuali, \`e consigliabile inserire 
+A questo punto \`e possibile nella macchina che dovr\`a gestire i repository
+clonare il repository \code{gitolite-admin} che \`e stato appena creato con i
+diversi file di configurazione:
 \iniziacode
-#!/bin/bash
-PYTHONPATH=/path/to/python/library
-PATH=/path/to/git/binary:$PATH
+$ git clone gitolite@xxx:gitolite-admin.git
 |finecode
-nella parte iniziale dell'hook in questione.
-}
+vi creer\`a il seguente repo
 \iniziacode
-$ chmod 755 /path/to/repositories/gitosis-admin.git/hooks/post-update
+$ tree gitolite-admin/
+gitolite-admin/
+||-- conf
+||   `-- gitolite.conf
+`-- keydir
+    `-- YourName.pub
 |finecode
-A questo punto \`e possibile clonare il repository in locale per effettuare la
-configurazione per l'accesso:
+In alcuni casi ci possono essere problemi con il client \code{ssh} che non trova la chiave giusta: \`e
+consigliabile inserire delle righe come le seguenti nel file \code{.ssh/config}
 \iniziacode
-$ git clone git@your.domain:gitosis-admin.git
-$ cd gitosis-admin
-$ ls -l
--rw-r--r-- 1 user user  303 23 apr 09:46 gitosis.conf
-drwxr-xr-x 2 user user 4096 23 apr 09:46 keydir
+Host xxx
+  User gitolite
+  HostName 192.168.0.5
+  IdentityFile /home/gipi/.ssh/id_rsa
+  IdentitiesOnly yes
 |finecode
-(notare come il percorso \url{repositories/} non venga incluso, rendendo
-trasparente l'accesso).
+
+
+
 
 \sezione Bundle
 
