@@ -160,6 +160,33 @@ $ git add <qualcosa>                           # aggiunge elementi per il commit
 $ git commit                                   # commit senza parenti
 |finecode
 
+\sezione Modificare il primo commit
+
+\iniziacode
+# Go back to the last commit that we want to form the initial commit (detach HEAD)
+git checkout <sha1_for_B>
+
+# reset the branch pointer to the initial commit,
+# but leaving the index and working tree intact.
+git reset --soft <sha1_for_A>
+
+# amend the initial tree using the tree from 'B'
+git commit --amend
+
+# temporarily tag this new initial commit
+# (or you could remember the new commit sha1 manually)
+git tag tmp
+
+# go back to the original branch (assume master for this example)
+git checkout master
+
+# Replay all the commits after B onto the new initial commit
+git rebase --onto tmp <sha1_for_B>
+
+# remove the temporary tag
+git tag -d tmp
+|finecode
+
 \sezione Tenere la storia pulita secondo Linus
 
 In questa email l'amato creatore di git rende disponibile al pubblico la sua
