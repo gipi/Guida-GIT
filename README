@@ -1,0 +1,9 @@
+Questa è una guida scritta in TeX a tempo perso per segnare tutti
+le cose che conosco di GIT; per compilarla basta semplicemente
+installare alcuni pacchetti: in un sistema Debian basta dare
+
+ # apt-get install texlive-base-bin make pgf texlive-formats-extra texlive-plain-extra
+
+Per compilare effettivamente il tutto
+
+ $ make
