@@ -227,3 +227,34 @@ user@remote: $ git bundle create repo.bundle HEAD
 ... sposta repo.bundle in local
 user@local: $ git clone repo.bundle
 |finecode
+% http://stackoverflow.com/questions/3635952/how-to-use-git-bundle-for-keeping-development-in-sync
+\iniziacode
+# on hostA, the initial home of the repo
+hostA$ git bundle create hostA.bundle --branches --tags
+
+# transfer the bundle to hostB, and continue:
+hostB$ git clone /path/to/hostA.bundle my-repo
+# you now have a clone, complete with remote branches and tags
+# just to make it a little more obvious, rename the remote:
+hostB$ git remote rename origin hostA
+
+# make some commits on hostB; time to transfer back to hostA
+# use the known master branch of hostA as a basis
+hostB$ git bundle create hostB.bundle ^hostA/master --branches --tags
+
+# copy the bundle back over to hostA and continue:
+hostA$ git remote add hostB /path/to/hostB.bundle
+# fetch all the refs from the remote (creating remote branches like hostB/master)
+hostA$ git fetch hostB
+# pull from hostB's master, for example
+hostA$ git pull
+
+# make some commits on hostA; time to transfer to hostB
+# again, use the known master branch as a basis
+hostA$ git bundle create hostA.bundle ^hostB/master --branches --tags
+# copy the bundle to hostB, **replacing** the original bundle
+# update all the refs
+hostB$ git fetch hostA
+
+# and so on and so on
+|finecode
