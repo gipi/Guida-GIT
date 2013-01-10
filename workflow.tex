@@ -408,6 +408,11 @@ oppure per eliminare un file che non si desidera presentare nel repository
 git filter-branch --index-filter 'git rm --cached <file>' HEAD
 |finecode
 
+Caso particolare da tenere in considerazione \`e quello in cui si vuole
+agire sul commit iniziale (quello che non ha genitori).
+
+\url{http://stackoverflow.com/questions/2119480/changing-the-message-of-the-first-commit-git}
+
 \sezione Quando qualcosa va storto
 
 Pu\`o succedere che mentre si compiono azioni che vanno a riscrivere un branch
