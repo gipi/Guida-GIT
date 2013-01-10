@@ -164,6 +164,12 @@ passate tramite stdin ad una cartella \code{IMAP}
 Da parte di chi riceve le patch \'e possibile utilizzare invece il comando
 \code{git am} per applicarle al proprio repository.
 
+\iniziacode
+$ git format-patch HEAD^
+$ git imap-send 0001-some-fixes.patch
+$ git am some-fixes.eml # lato ricevente
+|finecode
+
 \sezione Gitolite
 
 \code{Gitolite} \`e un layer di amministrazione di accesso ai repository tramite
