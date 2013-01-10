@@ -400,7 +400,7 @@ per modificare il nome e la mail dell'autore in tutti i commit
 $ git filter-branch --env-filter \
   "export GIT_AUTHOR_NAME='Nome Cognome' \
   GIT_AUTHOR_EMAIL='email@dominio.org' \
-  GIT_COMMITER_NAME='Nome Cognome' \
+  GIT_COMMITTER_NAME='Nome Cognome' \
   GIT_COMMITTER_EMAIL=email@dominio.org"
 |finecode
 oppure per eliminare un file che non si desidera presentare nel repository
