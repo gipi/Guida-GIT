@@ -1,0 +1,12 @@
+\capitolo Coesistenza
+
+\sezione SVN
+
+\`E anche possibile importare da un progetto \code{SVN}
+
+\iniziacode
+$ git svn clone --stdlayout http://path/to/svn/project/root
+|finecode
+questo dovrebbe importare \code{trunk} e i vari \code{branches}/\code{tags}. Se
+il layout non ha un layout standard \`e possibile indicare come opzione di
+\code{init} una o pi\`u delle opzioni \code{--branches}, \code{--tags}.
