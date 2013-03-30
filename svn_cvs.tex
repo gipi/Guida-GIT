@@ -10,3 +10,46 @@ $ git svn clone --stdlayout http://path/to/svn/project/root
 questo dovrebbe importare \code{trunk} e i vari \code{branches}/\code{tags}. Se
 il layout non ha un layout standard \`e possibile indicare come opzione di
 \code{init} una o pi\`u delle opzioni \code{--branches}, \code{--tags}.
+
+\sezione Mercurial
+
+\code{Mercurial} \`e un altro sistema di versioning distribuito, molto
+usato.
+
+\`E possibile con
+
+\iniziacode
+$ git clone git://repo.or.cz/fast-export.git
+$ cd fast-export
+$ ./hg-fast-export.sh
+Usage: hg fast-export.sh [--quiet] [-r <repo>] [--force] [-m <max>] [-s] [-A
+<file>] [-M <name>] [-o <name>]
+
+Import hg repository <repo> up to either tip or <max>
+If <repo> is omitted, use last hg repository as obtained from state file,
+GIT_DIR/hg2git-state by default.
+
+Note: The argument order matters.
+
+Options:
+    -m      Maximum revision to import
+    --quiet Passed to git-fast-import(1)
+    -s      Enable parsing Signed-off-by lines
+    -A      Read author map from file
+            (Same as in git-svnimport(1) and git-cvsimport(1))
+    -r      Mercurial repository to import
+    -M      Set the default branch name (default to 'master')
+    -o      Use <name> as branch namespace to track upstream (eg 'origin')
+    --force Ignore validation errors when converting, and pass --force
+            to git-fast-import(1)
+|finecode
+
+Se abbiamo un repository in \url{/opt/parcel} che \`e un progetto mantenuto
+con mercurial dobbiamo creare un repository git vuoto e lanciare da quella
+directory \code{hg-fast-export.sh}
+
+\iniziacode
+$ mkdir parcel-git && cd parcel-git
+$ git init
+$ /path/to/hg-fast-export.sh -r /path/to/hg/repo
+|finecode
