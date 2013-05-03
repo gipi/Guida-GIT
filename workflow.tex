@@ -136,6 +136,8 @@ anche ai relativi path. La nuova configurazione andr\`a a creare un nuovo
 commit avente due commit genitori come in questo schema
 \input merge-scheme-final
 
+I due genitori sono indicabili tramite \verbatim HEAD^1|endverbatim\ e \verbatim HEAD^2|endverbatim.
+
 A parte la scelta della strategia, alla fine possono esserci dei conflitti
 durante l'operazione che devono essere risolti manualmente (Linus docet).
 
@@ -162,6 +164,30 @@ $ git checkout ORIG_HEAD <conflicted file> # prende contenuto dal locale
 Esiste anche la possibilit\`a di usare l'opzione \code{--squash} per ottenere un
 commit nel branch attuale con il contenuto del merge ma senza generare un vero e
 proprio merge (il commit risultante ha solo un genitore).
+
+Un discorso a parte meritano le \evidenzia<strategie>: tramite le opzioni
+\code{-s}/\code{--strategy} \`e possibile scegliere pi\`u nel dettaglio come il
+merge debba funzionare (in ci sono strategie che possono ricevere ulteriori opzioni
+tramite il flag \code{-X}).
+
+Le strategie disponibili sono:
+
+\iniziaelenco
+\li\code{resolve}
+\li\code{octopus}
+\li\code{ours}
+\li\code{subtree}
+\li\code{recursive}
+\fineelenco
+
+Questa ultima strategia accetta le seguenti opzioni:
+\iniziaelenco
+\li\code{ours}
+\li\code{theirs}
+\li\code{patience}
+\li\code{(no-)renormalize}
+\li\code{subtree}
+\fineelenco
 
 \sezione Rebasing
 
