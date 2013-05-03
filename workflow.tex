@@ -27,7 +27,23 @@ $ git config user.email "email@dominio.org"
 Di seguito si inizia a modificare/copiare/creare i file che dovranno fare parte
 della prima revisione del vostro progetto; una volta che si ha una prima
 versione a voi congeniale del progetto, si aggiungono i file all'indice tramite
-\code{git add}
+\code{git add}.
+
+\`E anche possibile indicare tramite l'opzione \code{--shared} che si vuole
+condividere il repository localmente, cio\'e con chi pu\`o accedere localmente
+allo stesso filesystem dove si trova questo repository; dalla documentazione
+si evince che \`e possibile passare dei parametri a questa opzione:
+
+\iniziaelenco
+\li \code{umask} (o \code{false}): usa \code{umask} per i permessi (in pratica
+quello che fa quando \code{--shared} non \`e specificato).
+\li \code{group} (o \code{true}): il repository viene reso accessibile in
+scrittura al gruppo (con conseguente \code{g+sx}).
+\li \code{all} (o \code{world} o \code{everybody}): come \code{group} ma rende
+il repository accessibile in lettura a tutti.
+\li \code{0xxx}: viene usato il numero ottale per impostare un valore custom per
+\code{umask}.
+\fineelenco
 
 \sezione Progetto gi\`a esistente
 
@@ -41,7 +57,7 @@ $ git clone http://dominio/repo.git
 Questo crea una directory di nome \code{repo} nella directory dove \`e stato
 lanciato il comando a meno dell'uso dell'opzione \code{--bare} che genera invece
 una directory \code{repo.git} senza un working tree. Questo ultimo comando \`e
-utile per generare repository da condividere.
+utile per generare repository da condividere (c'\`e anche l'opzione \code{--shared}).
 
 A questo punto magari si \`e interessati a conoscere il numero di branch
 presenti sul repo remoto: per esempio questo succede per il codice originale di
