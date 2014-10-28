@@ -18,6 +18,15 @@ $ cd xorg
 $ git submodule update --init
 |finecode
 
+Nel caso vogliate aggiungere voi un sottorepository
+
+\iniziacode
+$ git submodule add <repository> <local directory>
+|finecode
+
+questo creerà un \code{.gitmodules} file nella root del progetto e verra inizializzato il repo
+con il tree (verr\`a anche aggiunto il \code{tree} nell'indice).
+
 \sezione Subtree
 
 Esiste una particolare strategia da usare per il merge che permette di tenere
